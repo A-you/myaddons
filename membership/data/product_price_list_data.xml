@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- 货币 -->
+        <!--<record id="currency_hkd_line" model="res.currency">-->
+            <!--<field name="name">HKD</field>-->
+            <!--<field name="symbol">￥</field>-->
+            <!--<field name="rate">7.8414</field>-->
+            <!--<field name="position">after</field>-->
+        <!--</record>-->
+
+        <!--<record id="currency_hk_line" model="res.currency">-->
+            <!--<field name="name">CNY</field>-->
+            <!--<field name="symbol">￥</field>-->
+            <!--<field name="rate">7.0831</field>-->
+            <!--<field name="position">after</field>-->
+        <!--</record>-->
+
+        <record id="product_price_list_hk_price" model="product.pricelist">
+            <field name="name">HK Discount Pricelist</field>
+            <field name="currency_id" ref="base.HKD"></field>
+        </record>
+        <record id="product_price_list_hk_cost_price" model="product.pricelist">
+            <field name="name">HK SalesPricelist</field>
+            <field name="currency_id" ref="base.HKD"></field>
+        </record>
+        <record id="product_price_list_cny_price" model="product.pricelist">
+            <field name="name">CNY Discount Pricelist</field>
+            <field name="currency_id" ref="base.CNY"></field>
+        </record>
+        <record id="product_price_list_cny_cost_price" model="product.pricelist">
+            <field name="name">CNY SalesPricelist</field>
+            <field name="currency_id" ref="base.CNY"></field>
+        </record>
+    </data>
+</odoo>

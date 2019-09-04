@@ -1,0 +1,10 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <div class="oe_button_box" name="button_box">
+  <button name="action_get_attachment_view" class="oe_stat_button" icon="fa-book" type="object">
+      <field name="attachment_number" widget="statinfo" string="附件上传"/>
+  </button>
+</div>
+  </data>
+</odoo>

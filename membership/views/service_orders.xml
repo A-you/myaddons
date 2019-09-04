@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="membership_service_line_form">
+        <field name="name">membership service form</field>
+        <field name="model">membership.service_line</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="do_submission_done" type="object" class="oe_highlight" string="待审核" attrs="{'invisible': [('state', '!=', 'audit')]}"/>
+                    <button name="do_service_invoice" type="object" string="登记付款" class="oe_highlight"  attrs="{'invisible': [('state', '!=', 'paid')]}"/>
+                    <button name="do_create_services_invoice" type="object" string="创建发票" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'available')]}"/>
+                    <button name="do_toggle_done" type="object" string="取消"/>
+                    <field name="state"  widget="statusbar" nolabel="1" statusbar_visible="audit,paid,available"/>
+                </header>
+                <sheet>
+                    <group>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="seller_id"/>
+                        <field name="service_price"/>
+                    </group>
+                    <group>
+                        <field name="membership_server"/>
+                        <field name="use_categ_type"/>
+                        <field name="is_use_company"/>
+                    </group>
+                    </group>
+                    <group>
+                        <field name="comments"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="membership_service_line_tree">
+        <field name="name">Service orders</field>
+        <field name="model">membership.service_line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="membership_server"/>
+                <field name="service_price"/>
+                <field name="start_date"/>
+                <field name="partner_id"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+     <record model="ir.actions.act_window" id="action_membership_service_line">
+        <field name="name">Service orders</field>
+        <field name="res_model">membership.service_line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+     <menuitem name="Service orders" id="menu_service_orders" sequence="8"
+              parent="membership.menu_association" action="action_membership_service_line"/>
+</odoo>

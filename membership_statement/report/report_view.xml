@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<odoo>
+    <!--Report for hotel folio -->
+    <report id="report_membership_consumption_details_management"
+            string="Membership Consumption"
+            model="membership.membership_line"
+            report_type="qweb-pdf"
+            file="membership_statement.consumption_details_report"
+            name="membership_statement.consumption_details_report"
+            menu="False" />
+</odoo>
+
+

@@ -1,0 +1,25 @@
+.hotel_service th[data-id="default_code"]{
+    width: 10%;
+}
+.hotel_service th[data-id="name"]{
+    width: 70%;
+}
+.hotel_service th[data-id="categ_id"]{
+    width: 10%;
+}
+.hotel_service th[data-id="list_price"]{
+    width: 10%;
+}
+
+.hotel_service .y-col-1{
+    width: 10%;
+}
+.hotel_service .y-col-7{
+    width: 70%;
+}
+.hotel_service .y-col-1{
+    width: 10%;
+}
+.hotel_service .y-col-1{
+    width: 10%;
+}

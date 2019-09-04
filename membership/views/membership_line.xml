@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <record model="ir.ui.view" id="membership_membership_line_form">
+        <field name="name">membership line form</field>
+        <field name="model">membership.membership_line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                    <group>
+                        <field name="partner"/>
+                        <field name="state"/>
+                        <field name="date"/>
+                        <field name="date_from"/>
+                    </group>
+                    <group>
+                        <field name="member_price"/>
+                         <field name="membership_id"/>
+                        <field name="company_id"/>
+                        <field name="buyer_id"/>
+                        <field name="date_to"/>
+                    </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="membership_membership_line">
+        <field name="name">membership line</field>
+        <field name="model">membership.membership_line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="partner"/>
+                <field name="state"/>
+                <field name="member_price"/>
+                <field name="membership_id"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_membership_membership_line">
+        <field name="name">Membership membership line</field>
+        <field name="res_model">membership.membership_line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+     <menuitem name="Members orders" id="menu_config_awaiting_approval" sequence="7"
+              parent="membership.menu_association" action="action_membership_membership_line"/>
+</odoo>

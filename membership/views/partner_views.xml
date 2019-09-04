@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- MEMBERSHIP/CURRENT MEMBERS -->
+
+    <record model="ir.ui.view" id="membership_members_tree">
+        <field name="name">Members</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree string="Members">
+                <field name="name"/>
+                <field name="membership_state"/>
+                <field name="associate_member"/>
+                <field name="membership_start"/>
+                <field name="membership_stop"/>
+                <field name="user_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_res_partner_member_filter" model="ir.ui.view">
+        <field name="name">res.partner.select</field>
+        <field name="model">res.partner</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <search string="Membership Partners">
+                <field name="name"
+                       filter_domain="['|','|',('name','ilike',self),('parent_id','ilike',self),('ref','=',self)]"/>
+                <field name="category_id"/>
+                <field name="membership_start" invisible="1"/>
+                <field name="membership_stop" string="End Membership Date"/>
+                <filter string="Customers" name="customer" domain="[('customer','=',True)]"/>
+                <separator/>
+                <filter string="Vendors" name="supplier" domain="[('supplier','=',True)]"/>
+                <separator/>
+                <filter name="all_non_members"
+                        domain="[('membership_state', 'in', ['none','canceled','old','waiting'])]"
+                        string="All non Members" help="None/Canceled/Old/Waiting"/>
+                <filter name="all_members" domain="[('membership_state', 'in', ['invoiced','paid','free'])]"
+                        string="All Members" help="Invoiced/Paid/Free"/>
+                <group expand="0" string="Group By" colspan="10" col="8">
+                    <filter string="Salesperson" name="salesperson" domain="[]" context="{'group_by' : 'user_id'}"/>
+                    <filter string="Associate Member" name="associate" domain="[]"
+                            context="{'group_by':'associate_member'}"/>
+                    <filter string=" Membership State" name="membership_state" domain="[]"
+                            context="{'group_by':'membership_state'}"/>
+                    <filter string="Start Date" name="start_month" help="Starting Date Of Membership" domain="[]"
+                            context="{'group_by':'membership_start'}"/>
+                    <filter string="End Date" name="end_month" help="Ending Date Of Membership" domain="[]"
+                            context="{'group_by':'membership_stop'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_membership_members">
+        <field name="name">Members</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form,activity</field>
+        <field name="search_view_id" ref="view_res_partner_member_filter"/>
+        <!--叼叼叼，在动作设置默认值-->
+        <field name="context">{"search_default_all_members": 1, "default_free_member": True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new member
+            </p>
+            <p>
+                Odoo helps you easily track all activities related to a member:
+                Current Membership Status, Discussions and History of Membership, etc.
+            </p>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="action_membership_members_view_tree">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="membership_members_tree"/>
+        <field name="act_window_id" ref="action_membership_members"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="action_membership_members_view_form">
+        <field name="sequence" eval="3"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="base.view_partner_form"/>
+        <field name="act_window_id" ref="action_membership_members"/>
+    </record>
+    <record model="ir.actions.act_window.view" id="action_membership_members_view_kanban">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="base.res_partner_kanban_view"/>
+        <field name="act_window_id" ref="action_membership_members"/>
+    </record>
+    <menuitem name="Members" id="menu_membership" sequence="0" parent="menu_association"
+              action="action_membership_members"/>
+
+    <!-- PARTNERS -->
+
+    <record model="ir.ui.view" id="view_partner_tree">
+        <field name="name">res.partner.tree.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <tree string="Contacts">
+                <field name="category_id" position="after"/>
+                <field name="membership_state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_partner_form">
+        <field name="name">res.partner.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_ids']" position="after">
+                <field name="other_phone" widget="phone"/>
+                <field name="wechat"/>
+                <field name="facebook_account"/>
+                <field name="instagram_account"/>
+                <field name="weibo_account"/>
+                <field name="linkedin_account"/>
+                <field name="twitter_account"/>
+                <field name="google_account"/>
+                <field name="pinterest_account"/>
+                <field name="other_account"/>
+                <field name="ocean_platform_id"/>
+                <field name="uniform_social_credit_code"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="replace">
+                <field name="name" default_focus="1" placeholder="Name"
+                       attrs="{'required' : [('type', '=', 'contact')],
+                              'invisible' : [('is_company', '=', False)],}"/>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="replace">
+                <field name="category_id">
+                    <tree>
+                        <field name="name"/>
+                        <field name="parent_id"/>
+                    </tree>
+                </field>
+            </xpath>
+
+            <xpath expr="//field[@name='vat']" position="replace">
+                <field name="area"/>
+                <field name="job_type"/>
+                <field name="come_from"/>
+                <field name="is_design"/>
+                <field name="design_working_years"/>
+                <field name="id_type"/>
+                <field name="id_number"/>
+                <field name="password"/>
+                <field name="service_field">
+                    <tree>
+                        <field name="name"/>
+                        <field name="parent_id"/>
+                    </tree>
+                </field>
+            </xpath>
+            <xpath expr="//field[@name='type']" position="before">
+                <field name="company_creation_date" attrs="{'invisible': [('is_company','=', False)]}"/>
+                <field name="employee_number" attrs="{'invisible': [('is_company','=', False)]}"/>
+
+                <field name="first_name" attrs="{'invisible': [('company_type', '=', 'company')]}"/>
+                <field name="last_name"
+                       attrs="{'invisible': [('company_type', '=', 'company')]}"/>
+                <field name="en_last_name" attrs="{'invisible': [('company_type', '=', 'company')]}"/>
+                <field name="en_first_name" attrs="{'invisible': [('company_type', '=', 'company')]}"/>
+            </xpath>
+            <notebook position="inside">
+                <page string="Membership">
+                    <group>
+                        <group>
+                            <field name="free_member" attrs="{'invisible':1}"/>
+                            <label for="membership_state"/>
+                            <div>
+                                <field name="membership_state"/>
+                                <button name="%(action_membership_invoice_view)d" type="action" string="Buy Membership"
+                                        class="oe_link"/>
+                            </div>
+                            <field name="membership_level"/>
+                            <field name="membership_numbered"/>
+                        </group>
+                        <group>
+
+                            <field name="membership_tag" widget="many2many_tags" domain="[('product_type', '=', 'package')]"/>
+
+                            <!--<field name="associate_member" attrs="{'invisible':[('free_member','=',True)]}"/>-->
+                            <field name="associate_member" attrs="{'invisible':1}"/>
+                            <field name="membership_start" attrs="{'invisible':[('membership_start','=',False)]}"/>
+                            <field name="membership_stop" attrs="{'invisible':[('membership_stop','=',False)]}"/>
+                            <field name="membership_cancel" attrs="{'invisible':[('membership_cancel','=',False)]}"/>
+
+                            <!--<label string="ZP" class="oe_inline"/>-->
+                        </group>
+                    </group>
+                    <h3>会籍订单</h3>
+                    <field name="member_lines" nolabel="1" colspan="4" readonly="1">
+                        <tree string="Memberships">
+                            <field name="date"/>
+                            <field name="membership_id"/>
+                            <field name="member_price"/>
+                            <field name="account_invoice_id"/>
+                            <field name="state"/>
+                        </tree>
+                        <form string="Memberships">
+                            <group col="2">
+                                <group>
+                                    <field name="membership_id"/>
+                                    <field name="date"/>
+                                    <field name="state"/>
+                                </group>
+                                <group>
+                                    <field name="member_price"/>
+                                    <field name="account_invoice_id"
+                                           context="{'form_view_ref': 'account.invoice_form'}"/>
+                                </group>
+                            </group>
+                        </form>
+                    </field>
+
+                </page>
+                <page string="积分详情">
+                    <field name="membership_points_lines">
+                        <tree string="会员积分详情" editable="bottom">
+                            <field name="name"/>
+                            <field name="points"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="Service">
+                    <button name="%(action_membership_services_invoice_view)d" type="action" string="Buy Services"/>
+                    <field name="membership_server" nolabel="1" colspan="4" readonly="1">
+                        <tree string="Memberships">
+                            <field name="membership_server"/>
+                            <field name="service_price"/>
+                            <field name="start_date"/>
+                            <field name="state"/>
+                        </tree>
+                        <!-- <form string="Memberships">
+                             <group col="2">
+                                 <group>
+                                     <field name="membership_id"/>
+                                     <field name="date"/>
+                                     <field name="state"/>
+                                 </group>
+                                 <group>
+                                     <field name="member_price"/>
+                                     <field name="account_invoice_id"
+                                            context="{'form_view_ref': 'account.invoice_form'}"/>
+                                 </group>
+                             </group>
+                         </form>-->
+                    </field>
+
+                </page>
+                <page string="Personal Company">
+                    <field name="personal_or_company">
+                        <tree>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="Show Image">
+                    <field name="show_image1" widget="image" img_width="350" img_height="300" height="300"/>
+                    <field name="show_image2" widget="image" img_width="350" img_height="300" height="300"/>
+                    <field name="show_image3" widget="image" img_width="350" img_height="300" height="300"/>
+                    <group>
+                        <field name="show_image1_url"/>
+                        <field name="show_image2_url"/>
+                        <field name="show_image3_url"/>
+                        <field name="image_url"/>
+                    </group>
+                </page>
+            </notebook>
+
+        </field>
+    </record>
+
+    <!--  服务领域Tree视图  -->
+    <record id="view_service_field_tree" model="ir.ui.view">
+        <field name="name">res.partner.service.field</field>
+        <field name="model">res.partner.service.field</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="parent_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_partner_category">
+        <field name="name">Tag MGT</field>
+        <field name="res_model">res.partner.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_config_service_field">
+        <field name="name">Service Field</field>
+        <field name="res_model">res.partner.service.field</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Tag MGT" id="menu_config_partner_category" sequence="5"
+              parent="membership.menu_marketing_config_association" action="action_partner_category"/>
+    <menuitem name="Service Field" id="menu_config_service_field" sequence="6"
+              parent="membership.menu_marketing_config_association" action="action_config_service_field"/>
+</odoo>

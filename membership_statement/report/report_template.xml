@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<odoo>
+
+    <!--Template for hotel folio -->
+    <template id="consumption_details_report">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <br />
+                    <br />
+                    <div class="row mt32 mb32">
+                        <h4>
+                            <span>
+                                <center>Consumption details</center>
+                            </span>
+                        </h4>
+                    </div>
+                     <div class="row mt32 mb32">
+                            <div class="text-center">
+                                <strong>From:</strong>
+                                <span t-esc="data['start_date']" />
+                                <strong>To:</strong>
+                                <span t-esc="data['end_date']" />
+                            </div>
+                        </div>
+                    <table class="table table-condensed">
+                        <tr>
+                            <td>
+                                <strong>time</strong>
+                            </td>
+                            <td>
+                                <strong>Name</strong>
+                            </td>
+                            <td>
+                                <strong>Integral</strong>
+                            </td>
+                        </tr>
+                        <tr t-foreach="folio_data" t-as="folio">
+                        <tr>
+                            <td style="border:1px solid #fff;border-right:none;border-bottom:none;width:140;">
+                                <span t-esc="folio.get('write_date', '')" />
+                            </td>
+                            <td style="border:1px solid #fff;border-left:none;border-right:none;border-bottom:none;width:397">
+                                <p><span t-esc="folio.get('membership_id', '')" /></p >
+                                <p><span t-esc="partner_name or ''" /></p >
+                            </td>
+                            <td style="border:1px solid #fff;border-left:none;border-right:none;border-bottom:none;width:155">
+                                <t t-if="folio.get('member_price')">
+                                    <t t-if="folio.get('is_service')">
+                                        <span>-</span>
+                                    </t>
+                                    <t t-else="">+</t>
+                                    <span t-esc="folio.get('member_price')"/><span style="padding-left: 3px;">coins</span>
+                                </t>
+                            </td>
+                        </tr>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hotel_service_type,hotel.service_type.user,model_hotel_service_type,base.group_user,1,1,1,0
+access_hotel_service_type_manager,hotel.service_type.manager,model_hotel_service_type,base.group_user,1,1,1,1
+access_hotel_services,hotel.sevices.user,model_hotel_services,base.group_user,1,1,1,0
+access_hotel_services_manager,hotel.sevices.manager,model_hotel_services,base.group_user,1,1,1,1
+access_hotel_service_type_percentages,hotel.sevices.type.percentages.user,model_hotel_service_type_percentage,base.group_user,1,1,1,0
+access_hotel_type_percentages_manager,hotel.sevices.type.percentages.manager,model_hotel_service_type_percentage,base.group_user,1,1,1,1
+access_product_hotel_service_line,hotel.product.hotel.service.line.user,model_product_hotel_service_line,base.group_user,1,1,1,1

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <data>
+       <!-- Inherit Form View to Modify it -->
+       <record id="product_supplierinfo_form_view" model="ir.ui.view">
+           <field name="name">event.event.form</field>
+            <field name="model">event.event</field>
+           <field name="inherit_id" ref="event.view_event_form"/>
+           <field name="arch" type="xml">
+               <xpath expr="//field[@name='date_begin']" position="before">
+                   <!-- Add your fields or attributes here -->
+                   <field name="service_product_id"/>
+               </xpath>
+               <page name="event_mail_schedule" position="after">
+                   <page string="Describe">
+                       <group>
+                           <group>
+                               <field name="service_image" widget="image" options='{"size": [200, 400]}'/>
+                               <field name="image_url" widget="url"/>
+                            </group>
+                           <group string="时间段" help="一天中,活动开展的时间段">
+                               <field name='start_hour' widget='float_time' />
+                               <field name='end_hour' widget='float_time' />
+                           </group>
+                       </group>
+                       <div>
+                           <label for="event_addr"/>
+                            <field name="event_addr" string="活动地址"/>
+                       </div>
+                       <div>
+                           <label for="service_description"/>
+                           <field name="service_description"/>
+                       </div>
+                   </page>
+               </page>
+           </field>
+       </record>
+
+       <!--<record id="product_supplierinfo_tree_view" model="ir.ui.view">-->
+           <!--<field name="name">product.supplierinfo.tree.view</field>-->
+            <!--<field name="model">product.supplierinfo</field>-->
+           <!--<field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>-->
+           <!--<field name="arch" type="xml">-->
+
+               <!--<xpath expr="//field[@name='price']" position="before">-->
+                   <!--<field name="member_level"/>-->
+               <!--</xpath>-->
+
+           <!--</field>-->
+       <!--</record>-->
+   </data>
+</odoo>

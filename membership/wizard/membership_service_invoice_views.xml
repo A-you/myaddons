@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_membership_services_invoice_view" model="ir.ui.view">
+            <field name="name">membership.services.invoice.view.form</field>
+            <field name="model">membership.services.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Membership Services Invoice">
+                    <group>
+                        <field name="product_ids" domain="[('type','=','membership_service')]"/>
+                        <field name="seller_id"/>
+                        <field name="total_price"/>
+                        <field name="is_use_company"/>
+                    </group>
+                    <footer>
+                        <button string="Invoice Membership" name="service_invoice" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_membership_services_invoice_view" model="ir.actions.act_window">
+            <field name="name">Join Membership</field>
+            <field name="res_model">membership.services.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_membership_services_invoice_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <act_window name="Invoice Membership Services"
+                    res_model="membership.services.invoice"
+                    src_model="res.partner"
+                    multi="True"
+                    key2="client_action_multi"
+                    view_mode="form"
+                    id="action_membership_services_invoice_view"/>
+    </data>
+</odoo>
