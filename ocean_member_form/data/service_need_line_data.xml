@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="service_needed_line1" model="ocean.form.service.line">
+            <field name="name">在中国促销活动</field>
+        </record>
+        <record id="service_needed_line2" model="ocean.form.service.line">
+            <field name="name">寻找分销商</field>
+        </record>
+        <record id="service_needed_line3" model="ocean.form.service.line">
+            <field name="name">品牌及营销及策划</field>
+        </record>
+        <record id="service_needed_line4" model="ocean.form.service.line">
+            <field name="name">IT服务</field>
+        </record>
+        <record id="service_needed_line5" model="ocean.form.service.line">
+            <field name="name">许可证申办服务</field>
+        </record>
+        <record id="service_needed_line6" model="ocean.form.service.line">
+            <field name="name">进口报关服务</field>
+        </record>
+        <record id="service_needed_line6" model="ocean.form.service.line">
+            <field name="name">财务及法务服务</field>
+        </record>
+        <record id="service_needed_line7" model="ocean.form.service.line">
+            <field name="name">跨境电商服务</field>
+        </record>
+        <record id="service_needed_line8" model="ocean.form.service.line">
+            <field name="name">市场调研</field>
+        </record>
+
+    </data>
+</odoo>

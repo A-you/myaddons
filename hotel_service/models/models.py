@@ -120,4 +120,14 @@ class HotelServices(models.Model):
     # x_parent = fields.Many2one('hotel.services', 'Higher Level')
     x_parent = fields.Many2one('hotel.services', '上级')
 
+    service_numbered = fields.Char(string='服务编号',readonly=True)
+
     even_ids = fields.One2many('event.event','service_product_id',string='活动条目')
+
+    @api.multi
+    def write(self, vals):
+        # 生成会员编号
+        if not self.service_numbered:
+            vals['service_numbered'] = self.env['ir.sequence'].next_by_code(
+                'hotel.services') or ''
+        return super(HotelServices, self).write(vals)

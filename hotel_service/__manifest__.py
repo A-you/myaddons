@@ -17,6 +17,7 @@
     'depends': ['base', 'sale_stock', 'product'],
     'data': [
         'security/ir.model.access.csv',
+        'data/service_data.xml',
         'views/templates.xml',
         'views/views.xml',
         'views/inherit_even.xml',

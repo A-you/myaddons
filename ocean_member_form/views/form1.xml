@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="ocean_member_tree1" model="ir.ui.view">
+            <field name="name">ocean member tree1</field>
+            <field name="model">ocean.member.form1</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="partner_id"/>
+                    <field name="brand_website"/>
+                    <field name="brand_origin"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ocean_member_form1" model="ir.ui.view">
+            <field name="name">ocean member form1</field>
+            <field name="model">ocean.member.form1</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+  <button name="action_get_attachment_view" class="oe_stat_button" icon="fa-book" type="object">
+      <field name="attachment_number" widget="statinfo" string="附件上传"/>
+  </button>
+</div>
+                        <group>
+                            <group >
+                                <field name="brand_website"/>
+                                <field name="brand_origin"/>
+                                <field name="nature_business"/>
+                                <field name="product_category_ids" widget="many2many_tags"/>
+                                <field name="service_needed_ids" widget="many2many_tags"/>
+                                <field name="partner_id"/>
+                            </group>
+                            <group string="目标客群">
+                                <field name="gender"/>
+                                <field name="age_group"/>
+                                <field name="education"/>
+                                <field name="income"/>
+                                <field name="interest"/>
+                                <field name="other_costumer_attr"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="brand_description"/>
+                            </group>
+                            <group string="竞争对手">
+                                <field name="china_opponents" widget="many2many_tags"/>
+                                <field name="source_opponents" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+         <record id="ocean_member_form_action" model="ir.actions.act_window">
+            <field name="name">博志馆会员申请表 1</field>
+            <field name="res_model">ocean.member.form1</field>
+            <field name="view_mode">tree,form</field>
+            <!--<field name="target">fullscreen</field>-->
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    wait for a new request form
+                </p>
+            </field>
+        </record>
+
+        <!-- This Menu Item Must have a parent -->
+       <menuitem name="OceanForm" id="ocean_member_menu" sequence="0" web_icon="ocean_member_form,static/description/icon.png"  action="ocean_member_form_action"/>
+
+</odoo>

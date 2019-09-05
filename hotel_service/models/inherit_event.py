@@ -18,7 +18,7 @@ class InhertEventEvent(models.Model):
 	start_hour = fields.Float('起', default=7,help='一天中,活动开展的时间起')
 	end_hour = fields.Float('止', default=23,help='一天中,活动开展的时间止')
 
-	event_addr = fields.Char(string='地址')
+	event_addr = fields.Char(string='活动地址')
 
 	def _get_attachments(self, attachments):
 		return ', '.join([k.name for k in attachments])

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ocean_form_product_line1" model="ocean.form.product.category">
+            <field name="name">Personal Care Beauty</field>
+        </record>
+        <record id="ocean_form_product_line2" model="ocean.form.product.category">
+            <field name="name">Maternity  Baby </field>
+        </record>
+        <record id="ocean_form_product_line3" model="ocean.form.product.category">
+            <field name="name">Clothing  Shoes</field>
+        </record>
+        <record id="ocean_form_product_line4" model="ocean.form.product.category">
+            <field name="name">Personal Accessories </field>
+        </record>
+        <record id="ocean_form_product_line5" model="ocean.form.product.category">
+            <field name="name">Bag  Luggages</field>
+        </record>
+        <record id="ocean_form_product_line6" model="ocean.form.product.category">
+            <field name="name">Digital Applicance  Gadgets</field>
+        </record>
+    </data>
+</odoo>

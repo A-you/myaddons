@@ -221,6 +221,7 @@ class MembershipServiceController(http.Controller):
 			return invalid_response("fail", [{"code": 600, "state": False}, {"data": ""}], 200)
 		if is_buy:
 			state = "paid"
+			#该服务是否需要审核
 			if product_ids.auto_approval:
 				state = "audit"
 			#创建服务记录
