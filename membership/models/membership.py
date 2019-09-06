@@ -276,7 +276,6 @@ class MembershipLine(models.Model):
 
                         hasPackage = self.env['membership.membership_line'].search(
                             [('membership_id', '=', line.membership_id[0].id), ('partner', '=', line.partner.id)])
-                        print("hhhh",hasPackage)
                         #如果没有购买过这会籍，如果没有购买过，则进行查迎新
                         if  len(hasPackage) <=1:
                             if line.membership_id.membership_new_arrivals_ids:
