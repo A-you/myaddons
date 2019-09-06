@@ -18,6 +18,10 @@
             <field name="number_next">1</field>
             <field name="number_increment">1</field>
         </record>
+
+        <record id="res_partner_category_data_igba" model="res.partner.category">
+            <field name="name">IGBA</field>
+        </record>
     </data>
 
 </odoo>
