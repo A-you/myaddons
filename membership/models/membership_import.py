@@ -34,23 +34,7 @@ class WxappImportProduct(models.TransientModel):
 		    "category_id": [(4, self.env.ref("membership.res_partner_category_data_igba").id)] if y['is_igba'] else None,
 	        # "membership_points_lines": [(0,0,{})]
 	    })[0]
-        #赠送积分
-        srivice_type_ida=self.env['hotel.service.type'].sudo().search([("name",'=',"空間租用")])
-        self.env['membership.points.lines'].sudo().create({
-		    "name": "空間租用",
-		    "partner_id": res_id.id,
-	        "member_type": "package",
-	        "service_type_id": srivice_type_ida.id,
-	        "points": 150,
-	    })
-        srivice_type_idb = self.env['hotel.service.type'].sudo().search([("name", '=', "專業交流")])
-        self.env['membership.points.lines'].sudo().create({
-	        "name": "專業交流",
-	        "partner_id": res_id.id,
-	        "member_type": "package",
-	        "service_type_id": srivice_type_idb.id,
-	        "points": 1850,
-        })
+
         return res_id
 
 
@@ -114,7 +98,9 @@ class WxappImportProduct(models.TransientModel):
                     if company_id['w_id'] == str(sheet1.cell(member_row,22).value).strip():
                         company_id['membership_list'].append(_dict)
                     # else:
-            print(len(no_com_members))
+            print(len(no_com_members),"类型",type(no_com_members),no_com_members)
+            srivice_type_ida = self.env['hotel.service.type'].sudo().search([("name", '=', "空間租用")])
+            srivice_type_idb = self.env['hotel.service.type'].sudo().search([("name", '=', "專業交流")])
             for x in company_list:
                 com_id=self.env['res.partner'].sudo().create({
 	                "name": x['name'],
@@ -123,6 +109,21 @@ class WxappImportProduct(models.TransientModel):
 	                "is_company": 1,
 	                "membership_level": 1
                 })[0]
+                # 赠送积分
+                self.env['membership.points.lines'].sudo().create({
+	                "name": "空間租用",
+	                "partner_id": com_id.id,
+	                "member_type": "package",
+	                "service_type_id": srivice_type_ida.id,
+	                "points": 150,
+                })
+                self.env['membership.points.lines'].sudo().create({
+	                "name": "專業交流",
+	                "partner_id": com_id.id,
+	                "member_type": "package",
+	                "service_type_id": srivice_type_idb.id,
+	                "points": 1850,
+                })
                 for y in x['membership_list']:
                     if y:
                         per_id = self.create_person_partner(y)
