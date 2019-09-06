@@ -65,6 +65,8 @@ class WxappImportProduct(models.TransientModel):
             sheet1 = sheets[1]
             sheet2 = sheets[2]
             company_list=[]
+            #公司id_list
+            com_id_list = []
             for row in range(1,sheet2.nrows):
 	            data = {
 		            "name": str(sheet2.cell(row,0).value).strip(),
@@ -75,7 +77,9 @@ class WxappImportProduct(models.TransientModel):
 		            "membership_level": 1,
 		            "membership_list": []
 	            }
+	            com_id_list.append(str(sheet2.cell(row,1).value).strip())
 	            company_list.append(data)
+            print(len(com_id_list),com_id_list)
 	        #服务领域list
             service_type_list = []
             #没有公司的人
@@ -103,11 +107,13 @@ class WxappImportProduct(models.TransientModel):
 	                "is_igba":  True if str(sheet1.cell(member_row, 3).value).strip() == "Yes" else False
                 }
                 # company.country_id = self.ref('base.us')
+                person_com_id = str(sheet1.cell(member_row,22).value).strip()
+                if not person_com_id or person_com_id not in com_id_list:
+                    no_com_members.append(_dict)
                 for company_id in company_list:
                     if company_id['w_id'] == str(sheet1.cell(member_row,22).value).strip():
                         company_id['membership_list'].append(_dict)
                     # else:
-                    #     no_com_members.append(_dict)
             print(len(no_com_members))
             for x in company_list:
                 com_id=self.env['res.partner'].sudo().create({
