@@ -172,6 +172,7 @@ class Partner(models.Model):
     #公司关联个人，仅公司界面可见，
     company_to_personal = fields.Many2many('res.partner', 'company_to_personal_rel', 'company_id', 'personal_id',
                                            string='Personal Company')
+    internal_noted = fields.Text(string='服务领域')
     #sql约束微服务识别号唯一
     _sql_constraints = [(
         'partner_ocean_platform_id_unique',
@@ -183,7 +184,7 @@ class Partner(models.Model):
     # def create(self, vals):
     #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
     #     return super(Partner, self).create(vals)
-    @api.model
+    # @api.model
     def create(self, vals):
         # print(vals)
         if not vals.get('is_company'):
@@ -195,7 +196,8 @@ class Partner(models.Model):
             elif vals.get('first_name') and not vals.get('last_name'):
                 vals['name'] = '%s' % vals.get('last_name') or ''
             else:
-                raise ValueError("Missing first_name or last_name")
+                # raise ValueError("Missing first_name or last_name")
+                vals['name'] = "暂时没填"
         else:
             # 公司
             if not vals.get('name'):

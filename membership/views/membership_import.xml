@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="wxapp_test_product_import_form_0333" model="ir.ui.view">
+            <field name="name">product import test</field>
+            <field name="model">membership.import</field>
+            <field name="type">form</field>
+            <field name="priority">999</field>
+            <field name="arch" type="xml">
+                <form class="oe_form_configuration" create="0" delete="0" duplicate="0">
+                    <group>
+                        <group name="other_config" string="会员导入">
+                            <span>（*）导入会员的excel表格</span>
+                            <separator/>
+                            <group>
+                                <field name="xls"/>
+                            </group>
+                            <newline/>
+                            <group>
+                                <separator/>
+                                <button name="resize_write_product" type="object" string="确定导入" />
+                            </group>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_membership_import" model="ir.actions.act_window">
+            <field name="name">WXAPP Product test write</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">membership.import</field>
+            <!--<field name="view_type">form</field>-->
+            <field name="view_mode">form</field>
+            <!--<field name="res_id">1</field>-->
+            <field name="target">inline</field>
+            <field name="view_id" ref="wxapp_test_product_import_form_0333"/>
+            <!--<field name="view_ids"-->
+                   <!--eval="[(5, 0, 0),-->
+                          <!--(0, 0, {'view_mode': 'form', 'view_id': ref('wxapp_test_product_import_form')}),-->
+                    <!--]"/>-->
+        </record>
+
+        <menuitem action="action_membership_import" id="membership_import_menu" name="会员导入"  parent="menu_marketing_config_association" sequence="5" />
+    </data>
+</odoo>

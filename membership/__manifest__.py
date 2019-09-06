@@ -34,6 +34,7 @@ invoice and send propositions for membership renewal.
         'views/membership_line.xml',
         'views/inherit_supplierinfo.xml',
         'views/service_orders.xml',
+        'views/membership_import.xml',
         'report/report_membership_views.xml',
     ],
     'website': 'https://www.odoo.com/page/community-builder',

@@ -216,7 +216,9 @@
                             </group>
                         </form>
                     </field>
-
+                </page>
+                <page string="服务领域">
+                    <field name="internal_noted"/>
                 </page>
                 <page string="积分详情">
                     <field name="membership_points_lines">
@@ -270,7 +272,7 @@
                         </tree>
                     </field>
                 </page>
-                <page string="Show Image">
+                <page string="Show Image" invisible="1">
                     <field name="show_image1" widget="image" img_width="350" img_height="300" height="300"/>
                     <field name="show_image2" widget="image" img_width="350" img_height="300" height="300"/>
                     <field name="show_image3" widget="image" img_width="350" img_height="300" height="300"/>
