@@ -29,6 +29,7 @@ class WxappImportProduct(models.TransientModel):
 		    "email": y["email"],
 		    "phone": y["phone"],
 		    "other_phone": y['other_phone'],
+	        'mobile': y['mobile'],
 		    "internal_noted": y['internal_noted'],
 		    "wechat": y['wechat'],
 		    # tag_ids.append((4, self.env.ref('l10n_nl.account_tag_25').id))
@@ -68,6 +69,8 @@ class WxappImportProduct(models.TransientModel):
             service_type_list = []
             #没有公司的人
             no_com_members = []
+            n = 0
+            u = 0
             for member_row in range(4,sheet1.nrows):
                 str0 = str(sheet1.cell(member_row,24).value).strip()
                 if str0:
@@ -89,54 +92,55 @@ class WxappImportProduct(models.TransientModel):
 	                "wechat": str(sheet1.cell(member_row,11).value).strip(),
 	                "country": str(sheet1.cell(member_row, 9).value).strip()
                 }
-                # company.country_id = self.ref('base.us')
                 person_com_id = str(sheet1.cell(member_row,22).value).strip()
-                if not person_com_id or person_com_id not in com_id_list:
-                    no_com_members.append(_dict)
+                if str(sheet1.cell(member_row,3).value).strip() == 'ZR' or str(sheet1.cell(member_row,3).value).strip() == 'Zetwork':
+                    if not person_com_id:
+                        no_com_members.append(_dict)
                 for company_id in company_list:
                     if company_id['w_id'] == str(sheet1.cell(member_row,22).value).strip():
                         company_id['membership_list'].append(_dict)
-                    # else:
             srivice_type_ida = self.env['hotel.service.type'].sudo().search([("name", '=', "空間租用")])
             srivice_type_idb = self.env['hotel.service.type'].sudo().search([("name", '=', "專業交流")])
-            for x in company_list:
-                com_id=self.env['res.partner'].sudo().create({
-	                "name": x['name'],
-	                "company_type": x['company_type'],
-	                "phone": x["phone"],
-	                "is_company": 1,
-	                "membership_level": 1
-                })[0]
-                # 赠送积分
-                self.env['membership.points.lines'].sudo().create({
-	                "name": "空間租用",
-	                "partner_id": com_id.id,
-	                "member_type": "package",
-	                "service_type_id": srivice_type_ida.id,
-	                "points": 150,
-                })
-                self.env['membership.points.lines'].sudo().create({
-	                "name": "專業交流",
-	                "partner_id": com_id.id,
-	                "member_type": "package",
-	                "service_type_id": srivice_type_idb.id,
-	                "points": 1850,
-                })
-                for y in x['membership_list']:
-                    if y:
-                        per_id = self.create_person_partner(y)
-                        sql = """INSERT INTO personal_or_company_rel (current_id, relation_id)
-			            VALUES (%s,%s);""" % (per_id.id, com_id.id)
-                        self._cr.execute(sql)
-                        self._cr.commit()
-                        sql = """INSERT INTO company_to_personal_rel (company_id, personal_id)
-			            			            VALUES (%s,%s);""" % (com_id.id, per_id.id)
-                        self._cr.execute(sql)
-                        self._cr.commit()
-
-            #创建没有公司的人
+            # for x in company_list:
+            #     com_id=self.env['res.partner'].sudo().create({
+	        #         "name": x['name'],
+	        #         "company_type": x['company_type'],
+	        #         "phone": x["phone"],
+	        #         "is_company": 1,
+	        #         "membership_level": 1
+            #     })[0]
+            #     # 赠送积分
+            #     self.env['membership.points.lines'].sudo().create({
+	        #         "name": "空間租用",
+	        #         "partner_id": com_id.id,
+	        #         "member_type": "package",
+	        #         "service_type_id": srivice_type_ida.id,
+	        #         "points": 150,
+            #     })
+            #     self.env['membership.points.lines'].sudo().create({
+	        #         "name": "專業交流",
+	        #         "partner_id": com_id.id,
+	        #         "member_type": "package",
+	        #         "service_type_id": srivice_type_idb.id,
+	        #         "points": 1850,
+            #     })
+            #     for y in x['membership_list']:
+            #         if y:
+            #             per_id = self.create_person_partner(y)
+            #             sql = """INSERT INTO personal_or_company_rel (current_id, relation_id)
+			#             VALUES (%s,%s);""" % (per_id.id, com_id.id)
+            #             self._cr.execute(sql)
+            #             self._cr.commit()
+            #             sql = """INSERT INTO company_to_personal_rel (company_id, personal_id)
+			#             			            VALUES (%s,%s);""" % (com_id.id, per_id.id)
+            #             self._cr.execute(sql)
+            #             self._cr.commit()
+			#
+            # #创建没有公司的人
+            print(len(no_com_members))
             for t in no_com_members:
                 if t:
+                    print(t)
                     self.create_person_partner(t)
             # print(company_list)
             # for x in company_list:
