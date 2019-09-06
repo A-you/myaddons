@@ -252,8 +252,17 @@
                     </field>
 
                 </page>
-                <page string="Personal Company">
+                <page string="所在的公司" attrs="{'invisible': [('company_type','=','company')]}">
                     <field name="personal_or_company">
+                        <tree>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="拥有的员工" attrs="{'invisible': [('company_type','=','person')]}">
+                    <field name="company_to_personal">
                         <tree>
                             <field name="name"/>
                             <field name="email"/>

@@ -14,7 +14,7 @@
     'category': 'Uncategorized',
     'version': '0.1',
     # 依赖模块
-    'depends': ['base', 'sale_stock', 'product','event'],
+    'depends': ['base', 'sale_stock', 'product','event','event_sale'],
     'data': [
         'security/ir.model.access.csv',
         'data/service_data.xml',

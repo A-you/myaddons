@@ -167,10 +167,11 @@ class Partner(models.Model):
     uniform_social_credit_code = fields.Char(string='BR code')
 
 
-    #多个公司或多个人
+    #个人关联公司，仅个人界面可见，因业务改动，有数据，不方便卸载，字段名歧义较大。
     personal_or_company = fields.Many2many('res.partner','personal_or_company_rel','current_id','relation_id',string='Personal Company')
-
-
+    #公司关联个人，仅公司界面可见，
+    company_to_personal = fields.Many2many('res.partner', 'company_to_personal_rel', 'company_id', 'personal_id',
+                                           string='Personal Company')
     #sql约束微服务识别号唯一
     _sql_constraints = [(
         'partner_ocean_platform_id_unique',
