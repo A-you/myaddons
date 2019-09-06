@@ -31,7 +31,7 @@ class WxappImportProduct(models.TransientModel):
 		    "internal_noted": y['internal_noted'],
 		    "wechat": y['wechat'],
 		    # tag_ids.append((4, self.env.ref('l10n_nl.account_tag_25').id))
-		    "category_id": [(4, self.env.ref("membership.res_partner_category_data_igba").id)] if y['is_igba'] else None,
+		    "category_id": [(4, self.env.ref("membership.res_partner_category_data_igba").id)] if y['is_iba'] else None,
 		    "member_take": True if y['is_igba'] else False,
 	        # "membership_points_lines": [(0,0,{})]
 	    })[0]
@@ -40,7 +40,6 @@ class WxappImportProduct(models.TransientModel):
 
 
     def resize_write_product(self):
-        print(self.ids)
         no_find_list = []
         for wiz in self.browse(self.ids):
             if not wiz.xls:
@@ -64,19 +63,19 @@ class WxappImportProduct(models.TransientModel):
 	            }
 	            com_id_list.append(str(sheet2.cell(row,1).value).strip())
 	            company_list.append(data)
-            print(len(com_id_list),com_id_list)
 	        #服务领域list
             service_type_list = []
             #没有公司的人
             no_com_members = []
             for member_row in range(4,sheet1.nrows):
+                str(sheet1.cell(member_row, 3).value).strip()
                 str0 = str(sheet1.cell(member_row,24).value).strip()
                 if str0:
                     str_list = str0.split(";")
                     for res_str in str_list:
                         service_type_list.append(res_str)
                 _dict={
-	                "is_iba": 1 if str(sheet1.cell(member_row,2).value).strip()=="YES" else 0,
+	                "is_iba": 1 if str(sheet1.cell(member_row,2).value).strip()=="Yes" else 0,
 	                "title": str(sheet1.cell(member_row,4).value).strip(),
 	                "last_name": str(sheet1.cell(member_row,6).value).strip(),
 	                "first_name": str(sheet1.cell(member_row,5).value).strip(),
@@ -88,8 +87,7 @@ class WxappImportProduct(models.TransientModel):
 	                "other_phone": str(sheet1.cell(member_row,26).value).strip().replace(".",""),
 	                "internal_noted": str(sheet1.cell(member_row,24).value).strip(),
 	                "wechat": str(sheet1.cell(member_row,11).value).strip(),
-	                "country": str(sheet1.cell(member_row, 9).value).strip(),
-	                "is_igba":  True if str(sheet1.cell(member_row, 3).value).strip() == "Yes" else False
+	                "country": str(sheet1.cell(member_row, 9).value).strip()
                 }
                 # company.country_id = self.ref('base.us')
                 person_com_id = str(sheet1.cell(member_row,22).value).strip()
@@ -99,7 +97,6 @@ class WxappImportProduct(models.TransientModel):
                     if company_id['w_id'] == str(sheet1.cell(member_row,22).value).strip():
                         company_id['membership_list'].append(_dict)
                     # else:
-            print(len(no_com_members),"类型",type(no_com_members),no_com_members)
             srivice_type_ida = self.env['hotel.service.type'].sudo().search([("name", '=', "空間租用")])
             srivice_type_idb = self.env['hotel.service.type'].sudo().search([("name", '=', "專業交流")])
             for x in company_list:
