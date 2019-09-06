@@ -82,6 +82,7 @@ class Partner(models.Model):
     #会籍服务列表
     membership_server = fields.One2many(comodel_name='membership.service_line', inverse_name='partner_id',
                                         string='Server')
+    member_take = fields.Boolean(string="优先")
 
     # 姓：last_name
     # 名：first_name

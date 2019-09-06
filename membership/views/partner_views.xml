@@ -124,6 +124,7 @@
                 <field name="other_account"/>
                 <field name="ocean_platform_id"/>
                 <field name="uniform_social_credit_code"/>
+                <field name="member_take"/>
             </xpath>
             <xpath expr="//field[@name='name']" position="replace">
                 <field name="name" default_focus="1" placeholder="Name"

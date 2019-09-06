@@ -32,6 +32,7 @@ class WxappImportProduct(models.TransientModel):
 		    "wechat": y['wechat'],
 		    # tag_ids.append((4, self.env.ref('l10n_nl.account_tag_25').id))
 		    "category_id": [(4, self.env.ref("membership.res_partner_category_data_igba").id)] if y['is_igba'] else None,
+		    "member_take": True if y['is_igba'] else False,
 	        # "membership_points_lines": [(0,0,{})]
 	    })[0]
 
