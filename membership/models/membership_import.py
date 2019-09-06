@@ -19,6 +19,7 @@ class WxappImportProduct(models.TransientModel):
     name = fields.Char(string=u"产品名")
 
     def create_person_partner(self,y):
+        print(y['is_iba'])
         res_id=self.env['res.partner'].sudo().create({
 		    "last_name": y['last_name'],
 		    "company_type": "person",
@@ -68,14 +69,13 @@ class WxappImportProduct(models.TransientModel):
             #没有公司的人
             no_com_members = []
             for member_row in range(4,sheet1.nrows):
-                str(sheet1.cell(member_row, 3).value).strip()
                 str0 = str(sheet1.cell(member_row,24).value).strip()
                 if str0:
                     str_list = str0.split(";")
                     for res_str in str_list:
                         service_type_list.append(res_str)
                 _dict={
-	                "is_iba": 1 if str(sheet1.cell(member_row,2).value).strip()=="Yes" else 0,
+	                "is_iba": str(sheet1.cell(member_row,2).value).strip(),
 	                "title": str(sheet1.cell(member_row,4).value).strip(),
 	                "last_name": str(sheet1.cell(member_row,6).value).strip(),
 	                "first_name": str(sheet1.cell(member_row,5).value).strip(),
