@@ -75,7 +75,7 @@ class Partner(models.Model):
     #会员标签,购买会籍包可获得
     membership_tag = fields.Many2many('product.template','membership_product_tag_rel','partner_id','product_id',string='Member Title')
     # 会员编号
-    membership_numbered = fields.Char(string='Numbered')
+    membership_numbered = fields.Char(string='Numbered', readonly=True)
     #会员积分列表
     membership_points_lines = fields.One2many('membership.points.lines','partner_id',string='积分列表')
 
@@ -248,13 +248,13 @@ class Partner(models.Model):
             if not partner.is_company:
                 partner.name = '%s %s' % (partner.first_name or '', partner.last_name or '')
 
-    # @api.multi
-    # def write(self, vals):
-    #     # 生成会员编号
-    #     if not self.membership_numbered:
-    #         vals['membership_numbered'] = self.env['ir.sequence'].next_by_code(
-    #             'membership.numbered') or ''
-    #     return super(Partner, self).write(vals)
+    @api.multi
+    def write(self, vals):
+        # 生成会员编号
+        if not self.membership_numbered:
+            vals['membership_numbered'] = self.env['ir.sequence'].next_by_code(
+                'membership.numbered') or ''
+        return super(Partner, self).write(vals)
 
     @api.depends('member_lines.account_invoice_line.invoice_id.state',
                  'member_lines.account_invoice_line.invoice_id.invoice_line_ids',

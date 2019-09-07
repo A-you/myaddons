@@ -53,8 +53,8 @@ class WxappImportProduct(models.TransientModel):
             for row in range(1, sheet1.nrows):
                 partner_id = int(str(sheet1.cell(row,1).value).strip())
                 member_num = str(sheet1.cell(row,3).value).strip()
-                print(partner_id,type(partner_id))
-                print(member_num,type(member_num))
+                # print(partner_id,type(partner_id))
+                # print(member_num,type(member_num))
                 # browse:
                 partner=self.env['res.partner'].sudo().search([('id','=',partner_id)])
                 if partner:
