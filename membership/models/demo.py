@@ -6,12 +6,17 @@
 @time: 2019/8/28 16:26
 """
 
-price = {
-	"cny_price": 0,
-	# "hk_price": 0,
-	# "hk__cost_price": 1200,
-	# "cny__cost_price": 1000
-}
-# print([price.keys()][0])
+# price = {
+# 	"cny_price": 0,
+# 	# "hk_price": 0,
+# 	# "hk__cost_price": 1200,
+# 	# "cny__cost_price": 1000
+# }
+# # print([price.keys()][0])
+#
+# print(price['dddd'])
 
-print(price['dddd'])
+dict = {'Name': 'Zara', 'Age': 7}
+dict2 = {'Sex': 'female' }
+
+dict.update(dict2)
