@@ -24,9 +24,11 @@ error_code = {
     601: u'无权操作:缺少 token',
     602: u'签名错误',
 	603: u'参数错误,Parameter error',
+    604: u'无效的参数,不存在该用户',
     700: u'暂无数据',
     701: u'该功能暂未开通',
     702: u'资源余额不足',
+    703: u'活动已结束',
     901: u'登录超时',
     300: u'缺少参数',
     400: u'域名错误',
@@ -66,11 +68,13 @@ def convert_static_link(request, html):
 
 #微服务唯一识别号转partner_id
 def _ocean_platform_to_partner(ocean_platform_id):
-	"""
+    """
 	:param self:
 	:param ocean_platform_id:
 	:return:  int partner_id
 	"""
-	partner=request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(ocean_platform_id))])
-	partner_id = partner.id
-	return partner_id
+    partner_id = 0
+    partner=request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(ocean_platform_id))])
+    if partner:
+        partner_id = partner.id
+    return partner_id

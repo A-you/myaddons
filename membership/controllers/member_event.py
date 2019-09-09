@@ -15,6 +15,7 @@ from odoo.addons.restful.common import *
 from odoo.addons.restful.controllers.main import validate_token
 
 from .base import BaseController
+from .base import _ocean_platform_to_partner
 
 class MembershipEventController(http.Controller,BaseController):
 
@@ -119,9 +120,24 @@ class MembershipEventController(http.Controller,BaseController):
 		# return invalid_response("success", [{"code": 200, "state": True},{"count":count}, {"data": data}], 200)
 		return self.res_ok(count=count,data=data)
 
+	def create_event_registeration(self,company_id,event_id):
+		data = []
+		try:
+			event_order_id = request.env['event.registration'].sudo().create({
+				"event_id": int(event_id),
+				"partner_id": company_id
+			})
+			data.append(
+				{
+					"event_order_id": event_order_id.id
+				}
+			)
+			return self.res_ok(count=len(data), data=data)
+		except Exception as e:
+			return self.res_err(501,e)
+
 	@http.route("/membership/event/subscribe",type='http',auth='none',csrf=False,methods=['POST'])
 	def membership_event_subscribe(self,**kwargs):
-		import datetime
 		import time
 		personal_platform_id = kwargs.get('personal_platform_id', False)
 		event_id = kwargs.get('event_id', False)
@@ -136,12 +152,18 @@ class MembershipEventController(http.Controller,BaseController):
 		#当前时间戳unix
 		current_date = time.time()
 		if current_date > end_state:
-			print("已经结束了")
+			# print("已经结束了")
+			return self.res_err(703)
 		#允许最大预约人数
 		seats=event.seats_max
 		#当前已注册的人数
-		print(len(event.registration_ids))
-		print("当前时间戳",(time.time()-time.mktime(event.create_date.timetuple()))/60)
-		return self.res_ok(data='ok')
+		current_registeration = len(event.registration_ids)
+		if current_registeration>=seats:
+			return self.res_err(702)
+		company_id=_ocean_platform_to_partner(company_platform_id)
+		if not company_id:
+			return self.res_err(604)
+		data = self.create_event_registeration(company_id,event_id)
+		return data
 
 
