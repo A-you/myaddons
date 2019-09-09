@@ -22,6 +22,13 @@
         <record id="res_partner_category_data_igba" model="res.partner.category">
             <field name="name">IGBA</field>
         </record>
+
+        <!--<record id="membership_event_data_full_member" model="event.event.ticket">-->
+            <!--<field name="name">会员</field>-->
+        <!--</record>-->
+        <!--<record id="membership_event_data_no_member" model="event.event.ticket">-->
+            <!--<field name="name">非会员</field>-->
+        <!--</record>-->
     </data>
 
 </odoo>

@@ -20,16 +20,37 @@ class InhertEventEvent(models.Model):
 
 	event_addr = fields.Char(string='活动地址')
 
+	# _default_event_ticket_ids = [
+	# 	(4,self.env)
+	# ]
+
+	#这不是一个好方案，放弃
+	# def _default_event_ticket_ids(self):
+	# 	return [
+	# 		(4,self.env.ref('membership.membership_event_data_full_member').id)
+	# 	]
+	#
+	# event_ticket_ids = fields.One2many(
+	# 	'event.event.ticket', 'event_id', string='Event Ticket',
+	# 	copy=True,default=_default_event_ticket_ids)
+
 	def _get_attachments(self, attachments):
 		return ', '.join([k.name for k in attachments])
 
 	@api.depends('service_image')
 	def _compute_display_url(self):
-		base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-		for line in self:
-			line.image_url = '%s/web/image?model=event.event&id=%s&field=service_image' % (base_url, line.id)
+		if self.service_image:
+			base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+			for line in self:
+				line.image_url = '%s/web/image?model=event.event&id=%s&field=service_image' % (base_url, line.id)
 
 	# def get_main_image(self):
 	# 	base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
 	# 	# print base_url
 	# 	return '%s/web/image/event.event/%s/image/80x80' % (base_url, self.id)
+
+
+class EventTicket(models.Model):
+	_inherit = 'event.event.ticket'
+
+	membership_level = fields.Selection([(1,'非会员'),(2,'会员')], string='Level', default=1)

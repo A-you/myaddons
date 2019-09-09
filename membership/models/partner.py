@@ -76,6 +76,8 @@ class Partner(models.Model):
     membership_tag = fields.Many2many('product.template','membership_product_tag_rel','partner_id','product_id',string='Member Title')
     # 会员编号
     membership_numbered = fields.Char(string='Numbered', readonly=True)
+    #根据会员等级和会员编号计算得来
+    membership_code = fields.Char(compute='_compute_membership_code',store=True,string='Member Code')
     #会员积分列表
     membership_points_lines = fields.One2many('membership.points.lines','partner_id',string='积分列表')
 
@@ -185,9 +187,9 @@ class Partner(models.Model):
     # def create(self, vals):
     #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
     #     return super(Partner, self).create(vals)
-    # @api.model
+    @api.model
     def create(self, vals):
-        # print(vals)
+        print(vals)
         if not vals.get('is_company'):
             # 个人
             if vals.get('first_name') and vals.get('last_name'):
@@ -255,6 +257,22 @@ class Partner(models.Model):
             vals['membership_numbered'] = self.env['ir.sequence'].next_by_code(
                 'membership.numbered') or ''
         return super(Partner, self).write(vals)
+
+    @api.model
+    def _cron_update_membership_code(self):
+        partners = self.search([('membership_level', 'in', [1, 2]),("membership_numbered","!=",None)])
+        # mark the field to be recomputed, and recompute it
+        partners._recompute_todo(self._fields['membership_code'])
+        self.recompute()
+
+    @api.depends('membership_level','membership_numbered')
+    def _compute_membership_code(self):
+        prefix = "ZW"
+        for partner in self:
+            if partner.membership_level == 2:
+                prefix = 'ZR'
+            print("ddd",partner.membership_numbered)
+            partner.membership_code = prefix+str(partner.membership_numbered)
 
     @api.depends('member_lines.account_invoice_line.invoice_id.state',
                  'member_lines.account_invoice_line.invoice_id.invoice_line_ids',
