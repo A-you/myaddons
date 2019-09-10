@@ -162,12 +162,16 @@ class MembershipServiceController(http.Controller):
 		service=request.env['hotel.services'].sudo().search([('id','=',service_id)])
 		product_tmpl_id = service[0].product_id.product_tmpl_id.id
 
+		if not seller_id:
+			return invalid_response('Error', 'Parameter error')
+
 		#商品的价格，用于和积分做比较,没有考虑用服务商的价格做比较
 		price = service.product_id.product_tmpl_id.list_price
-		if seller_id:
-			seller_ids = request.env['product.supplierinfo'].sudo().search(
-				[('product_tmpl_id', '=', product_tmpl_id), ('id', '=', seller_id)])
-			price = seller_ids[0].price
+		seller_ids = request.env['product.supplierinfo'].sudo().search(
+			[('product_tmpl_id', '=', product_tmpl_id), ('id', '=', seller_id)])
+		if not seller_ids:
+			return invalid_response("fail", [{"code": 600, "state": False}, {"data": "亲，你输入的供应商id是错误的哦"}], 200)
+		price = seller_ids[0].price
 		service_categ_id = service.categ_id.id
 		point_ids = request.env['membership.points.lines'].sudo().search([('partner_id','=',partner_id)])
 		data = [self._handle_service_points_dict(point_id,price,service_categ_id) for point_id in point_ids]

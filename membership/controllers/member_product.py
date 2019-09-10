@@ -223,7 +223,6 @@ class MembershipProductController(http.Controller):
 			return invalid_response('Error', 'Parameter error')
 
 		invoice = request.env['account.invoice'].sudo().browse(invoice_id)
-		print("hahgggaha",invoice.state)
 		if not invoice:
 			return invalid_response('Error', 'Invoice does not exist')  # 不存在发票
 		if invoice.state == 'paid':
