@@ -19,12 +19,14 @@ class MembershipController(http.Controller):
             return invalid_response('Error', 'Parameter error')
         #暂时可以说是个人
         own_partner_id = request.env['res.partner'].sudo().search([('ocean_platform_id','=',str(own_platform_id))])
-        #暂时可以说是公司
-        other_partner_id = request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(other_platform_id))])
-        #插接插入到第三张表
+        #必须是公司身份
+        company_id = request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(other_platform_id))])
+        #判断公司是不是公司
+        if company_id.is_company:
+            return invalid_response('Error', 'Parameter error')
+        #插入到第三张表，个人与公司的关系表
         sql = """INSERT INTO personal_or_company_rel (current_id, relation_id)
-VALUES (%s,%s);"""%(own_partner_id.id,other_partner_id.id)
-        print("插入",sql)
+VALUES (%s,%s);"""%(own_partner_id.id,company_id.id)
         request._cr.execute(sql)
         request._cr.commit()
         return invalid_response("success", [{"code": 200}, {"data": ""}], 200)
