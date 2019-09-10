@@ -187,6 +187,12 @@ class Partner(models.Model):
     # def create(self, vals):
     #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
     #     return super(Partner, self).create(vals)
+
+    #查询注册会员时送的汇集
+    def query_register_member_product(self):
+        srivice_type_idb = self.env['hotel.service.type'].sudo().search([("name", '=', "空間租用")])
+        srivice_type_idd = self.env['hotel.service.type'].sudo().search([("name", '=', "專業交流")])
+        return srivice_type_idb
     @api.model
     def create(self, vals):
         print(vals)
@@ -203,8 +209,13 @@ class Partner(models.Model):
                 vals['name'] = "暂时没填"
         else:
             # 公司
+            vals['membership_points_lines']=[(0,0,{
+                "name":"哈哈哈"
+            })]
+            print("ggggg",vals)
             if not vals.get('name'):
                 raise ValueError('Missing name')
+
         return super(Partner, self).create(vals)
 
     @api.multi

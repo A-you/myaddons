@@ -234,7 +234,6 @@ class MembershipProductController(http.Controller):
 		request._cr.execute(sql)
 		result = request._cr.fetchall()
 		if not result:
-			print('不存在')
 			journal = request.env['account.journal'].search(
 				[('type', 'in', ('cash',)), ], limit=1)
 			values = {
