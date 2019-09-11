@@ -87,7 +87,7 @@ class MembershipLine(models.Model):
         pass
 
     #获取最高等级的称号
-    def _query_membership_max(self):
+    def _query_membership_title_max(self):
         id = self.partner.id
         # select_sql = """SELECT product_id FROM membership_product_tag_rel WHERE
         #                          partner_id=%s """ % (id)
@@ -107,21 +107,19 @@ class MembershipLine(models.Model):
             "团队": "associate"
         }
         product_dict={}
-        for product_id in self.partner.membership_tag:
-            product_dict[product_id.name]=product_id.weight_num
         membership_name = ""
-        if product_dict:
-            membership_name = membership_dict[max(product_dict,key=product_dict.get)]
-        if membership_name:
-            return membership_name
-        pass
+        membership_ids=self.env['membership.title'].sudo().search([("partner_id","=",id)])
+        for x in membership_ids:
+            product_dict[x.title_type] = x.weight_num or 0
+        membership_name=max(product_dict,key=product_dict.get)
+        return membership_name
 
     #向jav微服务中发送会籍信息
     def micro_services_membership(self):
         url = "http://111.231.55.146:8082/register/bindMembership"
         companyId=self.partner.ocean_platform_id
-        membership_name = self._query_membership_max()
-        print(companyId,membership_name)
+        membership_name = self._query_membership_title_max()
+        _logger.info('>>>have welcome_new_points %s' % membership_name)
         postdata = urllib.parse.urlencode({
             "companyId": companyId,
             "membershipName": membership_name,
@@ -129,7 +127,6 @@ class MembershipLine(models.Model):
         req = urllib.request.Request(url=url, data=postdata, method='POST')
         res = urllib.request.urlopen(req)
         res_data = res.read().decode('utf-8')
-        print(res_data)
         return True
 
     def _handle_package_new_points(self,hotel_service_type_id,welcome_new_points_dict):
@@ -259,24 +256,19 @@ class MembershipLine(models.Model):
                     if line.membership_id.product_type == 'package':
                         #membership_product_tag_rel  插入会员称号，因考虑称号和是否有这会籍并不是直接相关，可能有会籍记录，但称号已过期
                         #所以不没有直接关联
-                        select_sql = """SELECT partner_id FROM membership_product_tag_rel WHERE 
-                         partner_id=%s AND  product_id=%s"""%(line.partner.id,line.membership_id.product_tmpl_id.id)
-                        self._cr.execute(select_sql)
-                        res_id = self._cr.fetchone()
-                        if not res_id:
-                            try:
-                                sql = """INSERT INTO membership_product_tag_rel(partner_id,product_id)
-                                 VALUES (%s,%s)"""%(line.partner.id,line.membership_id.product_tmpl_id.id)
-                                self._cr.execute(sql)
-                                self._cr.commit()
-                            except Exception as e:
-                                pass
+                        membership_title=self.env['membership.title'].sudo().search([('title_type','=',line.membership_id.member_title),('partner_id','=',line.partner.id)])
+                        if not membership_title:
+                            self.env['membership.title'].sudo().create({
+                                "name": line.membership_id[0].name,
+                                "title_type": line.membership_id.member_title,
+                                "partner_id": line.partner.id,
+                                "product_id": line.membership_id[0].id
+                            })
                         #迎新点数,这里用一个字典做存储
                         welcome_new_points_dict = {}
 
                         hasPackage = self.env['membership.membership_line'].search(
-                            [('membership_id', '=', line.membership_id[0].id), ('partner', '=', line.partner.id)])
-                        #如果没有购买过这会籍，如果没有购买过，则进行查迎新
+                            [('membership_id', '=', line.membership_id[0].id), ('partner', '=', line.partner.id)])                      #如果没有购买过这会籍，如果没有购买过，则进行查迎新
                         if  len(hasPackage) <=1:
                             if line.membership_id.membership_new_arrivals_ids:
                                 for new_id in line.membership_id.membership_new_arrivals_ids:
@@ -417,6 +409,8 @@ class ServiceLine(models.Model):
                                          readonly=True)
     is_use_company = fields.Boolean('Use Company Points', readonly=True)
     use_points_type = fields.Selection(POINTS_TYPE, 'Use Points Type', readonly=True)
+
+    reservation_type = fields.Selection([('invoice','直接预约'),('subscribe','咨询预约')])
 
     service_price = fields.Float('Price')
 

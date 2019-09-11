@@ -73,7 +73,8 @@ class Partner(models.Model):
     # 会员等级
     membership_level = fields.Selection(LEVEL, string='Level', default=1)
     #会员标签,购买会籍包可获得
-    membership_tag = fields.Many2many('product.template','membership_product_tag_rel','partner_id','product_id',string='Member Title')
+    # membership_tag = fields.Many2many('product.template','membership_product_tag_rel','partner_id','product_id',string='Member Title')
+    membership_tag = fields.One2many('membership.title','partner_id',string='Member Title')
     # 会员编号
     membership_numbered = fields.Char(string='Numbered', readonly=True)
     #根据会员等级和会员编号计算得来
@@ -188,11 +189,22 @@ class Partner(models.Model):
     #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
     #     return super(Partner, self).create(vals)
 
-    #查询注册会员时送的汇集
-    def query_register_member_product(self):
+    #查询注册会员,时送的汇集
+    def query_register_member_product(self,vals):
         srivice_type_idb = self.env['hotel.service.type'].sudo().search([("name", '=', "空間租用")])
         srivice_type_idd = self.env['hotel.service.type'].sudo().search([("name", '=', "專業交流")])
-        return srivice_type_idb
+        vals['membership_points_lines']=[(0,0,{
+            "name": srivice_type_idb.name,
+	        "member_type": "package",
+	         "service_type_id": srivice_type_idb.id,
+	         "points": 158,
+        }),(0,0,{
+	        "name": srivice_type_idd.name,
+	        "member_type": "package",
+	         "service_type_id": srivice_type_idd.id,
+	         "points": 1853,
+        })]
+        return vals
     @api.model
     def create(self, vals):
         print(vals)
@@ -209,12 +221,13 @@ class Partner(models.Model):
                 vals['name'] = "暂时没填"
         else:
             # 公司
-            vals['membership_points_lines']=[(0,0,{
-                "name":"哈哈哈"
-            })]
+            # vals['membership_points_lines']=[(0,0,{
+            #     "name":"哈哈哈"
+            # })]
             print("ggggg",vals)
             if not vals.get('name'):
                 raise ValueError('Missing name')
+            vals = self.query_register_member_product(vals)
 
         return super(Partner, self).create(vals)
 
@@ -470,6 +483,7 @@ class Partner(models.Model):
         product_id = product_id or datas.get('membership_product_id')    #产品id，对应选择的会员产品id
         amount = datas.get('amount', 0.0)    #对应会员产品价格
         personal_id = datas.get('personal_id',2)  #购买人，前端购买者。
+        currency_id = datas.get('currency_id',None)
         invoice_list = []
         for partner in self:
             addr = partner.address_get(['invoice'])
@@ -483,6 +497,7 @@ class Partner(models.Model):
             invoice = self.env['account.invoice'].create({
                 'partner_id': partner.id,
                 'personal_id': int(personal_id),
+                'currency_id': currency_id,
                 'account_id': partner.property_account_receivable_id.id,
                 'fiscal_position_id': partner.property_account_position_id.id
             })

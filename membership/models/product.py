@@ -40,9 +40,9 @@ class Product(models.Model):
 
     # 购买该会籍获得对应的会员等级
     member_level = fields.Selection(LEVEL, string='Grading',default=1)
-
-    #权重，用于在会籍里显示
-    weight_num = fields.Integer(sting='Weight', default=0)
+    member_title = fields.Selection([('starter','创客'),('affiliate','基本'),('associate','团队')],string='Available Title')
+    #可获得称号权重，用于在会籍里显示
+    weight_num = fields.Integer(string='Title Weight', default=0)
 
     #拥有的服务类别
     membership_service_type_ids = fields.One2many('product.hotel.service.line','product_tmpl_id', string='Membership Service')

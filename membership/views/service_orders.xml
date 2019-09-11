@@ -18,6 +18,7 @@
                         <field name="partner_id"/>
                         <field name="seller_id"/>
                         <field name="service_price"/>
+                        <field name="reservation_type"/>
                     </group>
                     <group>
                         <field name="membership_server"/>
@@ -41,6 +42,7 @@
                 <field name="service_price"/>
                 <field name="start_date"/>
                 <field name="partner_id"/>
+                <field name="reservation_type"/>
                 <field name="state"/>
                 <field name="create_date"/>
             </tree>

@@ -100,6 +100,7 @@
                                groups="base.group_multi_company"
                                options="{'no_create': True}"/>
                         <field name="active"/>
+                        <field name="member_title"/>
                         <field name="weight_num"/>
                     </group>
                     <group>

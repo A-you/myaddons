@@ -245,7 +245,6 @@ class MembershipServiceController(http.Controller):
 	def service_subscribe(self, **kwargs):
 		own_platform_id = kwargs.get('own_platform_id', False)  # 暂定自己
 		other_platform_id = kwargs.get('other_platform_id', False)  # 暂时不用
-		use_points_wallet = kwargs.get('use_points_wallet', False)  # 预留字段
 		service_id = kwargs.get('service_id', False)
 		comments = kwargs.get('comments', False)
 		# 供应商
@@ -340,8 +339,6 @@ class MembershipServiceController(http.Controller):
 	@validate_token
 	@http.route('/membership/service/invoice/pay', type='http', auth='none', csrf=False, methods=['POST'])
 	def service_invoice_pay(self, **kwargs):
-		own_platform_id = kwargs.get('own_platform_id', False)  # 暂定购买者自己
-		other_platform_id = kwargs.get('other_platform_id', False)  # 暂时不用
 		#接收订单id和积分id
 		invoice_id = kwargs.get('invoice_id', False)  # 预留字段
 		points_id = kwargs.get('points_id',False)
