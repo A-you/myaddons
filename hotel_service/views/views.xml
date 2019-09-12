@@ -53,7 +53,6 @@
                                         <field name="product_manager" select="2" string="Service Manager"/>
                                         <field name="default_code"/>
                                         <field name="auto_approval"/>
-                                        <field name="service_numbered"/>
                                     </group>
                                 </group>
                                 <newline/>
@@ -116,8 +115,7 @@
             <field name="arch" type="xml">
                 <tree string="Space Services" class="hotel_service">
                     <field name="default_code" class="y-col-1"/>
-                    <field name="name"  class="y-col-6"/>
-                    <field name="service_numbered" class="y-col-1"/>
+                    <field name="name"  class="y-col-7"/>
                     <field name="categ_id" string="Service Category" class="y-col-1"/>
                     <field name="list_price" string="Service rate" colspan="1" class="y-col-1"/>
                 </tree>

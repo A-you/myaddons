@@ -39,10 +39,11 @@ class InhertEventEvent(models.Model):
 
 	@api.depends('service_image')
 	def _compute_display_url(self):
-		if self.service_image:
-			base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-			for line in self:
-				line.image_url = '%s/web/image?model=event.event&id=%s&field=service_image' % (base_url, line.id)
+		for x in self:
+			if x.service_image:
+				base_url = x.env['ir.config_parameter'].sudo().get_param('web.base.url')
+				for line in x:
+					line.image_url = '%s/web/image?model=event.event&id=%s&field=service_image' % (base_url, line.id)
 
 	# def get_main_image(self):
 	# 	base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')

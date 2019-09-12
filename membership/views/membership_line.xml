@@ -35,6 +35,8 @@
                 <field name="member_price"/>
                 <field name="membership_id"/>
                 <field name="company_id"/>
+                <field name="buyer_id"/>
+                <field name="create_date"/>
             </tree>
         </field>
     </record>

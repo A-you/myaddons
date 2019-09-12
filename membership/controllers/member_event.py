@@ -82,7 +82,6 @@ class MembershipEventController(http.Controller,BaseController):
 
 		domain = [('state', '=', 'confirm')]
 		event_ids = request.env['event.event'].sudo().search(domain)
-		print(event_ids)
 		data = [self._handle_event_dict(event_id) for event_id in event_ids]
 		count = len(data)
 		return self.res_ok(count=count,data=data)

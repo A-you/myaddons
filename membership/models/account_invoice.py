@@ -25,6 +25,16 @@ class Invoice(models.Model):
 
     personal_id = fields.Many2one('res.partner',string='购买人')
 
+    invoice_initial_code = fields.Char(string='Invoice Code')
+
+    @api.model
+    def create(self, vals):
+        # 生成服务订单编号
+        if not self.membership_numbered:
+            vals['invoice_initial_code'] = self.env['ir.sequence'].next_by_code(
+                'membership.service_line') or ''
+        return super(Invoice, self).create(vals)
+
     @api.multi
     def action_cancel_draft(self):
         self.env['membership.membership_line'].search([

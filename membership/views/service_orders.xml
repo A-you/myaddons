@@ -21,6 +21,7 @@
                         <field name="reservation_type"/>
                     </group>
                     <group>
+                        <field name="service_order"/>
                         <field name="membership_server"/>
                         <field name="use_categ_type"/>
                         <field name="is_use_company"/>
@@ -38,9 +39,9 @@
         <field name="model">membership.service_line</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="service_order"/>
                 <field name="membership_server"/>
                 <field name="service_price"/>
-                <field name="start_date"/>
                 <field name="partner_id"/>
                 <field name="reservation_type"/>
                 <field name="state"/>

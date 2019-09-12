@@ -423,6 +423,16 @@ class ServiceLine(models.Model):
     use_categ_type = fields.Char('Service Category', readonly=True)
     comments = fields.Text(string='预约备注')
 
+    service_order = fields.Char(string="Service Order")
+
+    @api.model
+    def create(self, vals):
+            # 生成服务订单编号
+        if not self.membership_numbered:
+            vals['service_order'] = self.env['ir.sequence'].next_by_code(
+                'membership.service_line') or ''
+        return super(ServiceLine, self).create(vals)
+
     @api.multi
     def do_submission_done(self):
         for server in self:
