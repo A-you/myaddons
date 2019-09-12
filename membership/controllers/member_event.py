@@ -64,9 +64,13 @@ class MembershipEventController(http.Controller,BaseController):
 		# return invalid_response("success", [{"code": 200, "state": True},{"count":count}, {"data": data}], 200)
 
 	def _handle_event_dict(sel,event_id):
+		# date = record.create_date.strftime("%Y-%m-%d")
 		_dict = {
 			"event_id": event_id.id,
 			"name": event_id.name,
+			"date_begin": event_id.date_begin.strftime("%Y-%m-%d"),
+			"date_end": event_id.date_end.strftime("%Y-%m-%d"),
+			"date_slot": str(event_id.date_begin.strftime("%Y年%m月%d日")) +"-" +str(event_id.date_end.strftime("%m月%d日")),
 			"imag_url": event_id.image_url,
 			"addr": "上海",
 		}
@@ -104,6 +108,9 @@ class MembershipEventController(http.Controller,BaseController):
 			"name": event_id.name,
 			"event_id": event_id.id,
 			"imag_url": event_id.image_url,
+			"date_begin": event_id.date_begin.strftime("%Y-%m-%d"),
+			"date_end": event_id.date_end.strftime("%Y-%m-%d"),
+			"date_slot": str(event_id.date_begin.strftime("%Y年%m月%d日")) + "-" + str(event_id.date_end.strftime("%m月%d日")),
 			"addr": event_id.event_addr,
 			"hour_slot": str(event_id.start_hour).replace('.',':')+'-'+str(event_id.end_hour).replace('.',':'),
 			"service_description": event_id.service_description
