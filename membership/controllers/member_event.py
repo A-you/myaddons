@@ -94,6 +94,9 @@ class MembershipEventController(http.Controller,BaseController):
 		time_slot = kwargs.get('time_slot', False)
 		time_stamp = kwargs.get('time_stamp', False)   #前端选择日历后需转为时间戳
 		service_id = kwargs.get('service_id', False)
+		domain = []
+		if service_id and int(service_id):
+			pass
 		return self.membership_event_query_route()
 
 	def _handle_event_detail_dict(self,event_id):
@@ -103,6 +106,7 @@ class MembershipEventController(http.Controller,BaseController):
 			"imag_url": event_id.image_url,
 			"addr": event_id.event_addr,
 			"hour_slot": str(event_id.start_hour).replace('.',':')+'-'+str(event_id.end_hour).replace('.',':'),
+			"service_description": event_id.service_description
 		}
 		return _dict
 
