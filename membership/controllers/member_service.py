@@ -24,6 +24,8 @@ from odoo.http import request
 
 from odoo.addons.restful.common import *
 from odoo.addons.restful.controllers.main import validate_token
+import logging
+_logger = logging.getLogger(__name__)
 
 class MembershipServiceController(http.Controller):
 
@@ -153,20 +155,26 @@ class MembershipServiceController(http.Controller):
 		}
 		return _dict
 
+	#根据供应商id和服务id查询价格
+	def _handle_service_seller_price_query(self):
+		"""
+
+		:return:
+		"""
+		pass
+
 	@http.route('/membership/service/points/query', type='http', auth='none', csrf=False, methods=['GET'])
 	def member_service_points(self,service_id=None,ocean_platform_id=None,**kwargs):
 		seller_id = kwargs.get('seller_id',False)
 		if not service_id or not ocean_platform_id:
 			return invalid_response('Error', 'Parameter error')
 		partner_id = self._ocean_platform_to_partner(ocean_platform_id)
-		service=request.env['hotel.services'].sudo().search([('id','=',service_id)])
-		product_tmpl_id = service[0].product_id.product_tmpl_id.id
-
 		if not seller_id:
 			return invalid_response('Error', 'Parameter error')
 
 		#商品的价格，用于和积分做比较,没有考虑用服务商的价格做比较
-		price = service.product_id.product_tmpl_id.list_price
+		service=request.env['hotel.services'].sudo().search([('id','=',service_id)])
+		product_tmpl_id = service[0].product_id.product_tmpl_id.id
 		seller_ids = request.env['product.supplierinfo'].sudo().search(
 			[('product_tmpl_id', '=', product_tmpl_id), ('id', '=', seller_id)])
 		if not seller_ids:
@@ -205,35 +213,41 @@ class MembershipServiceController(http.Controller):
 		seller_price = kwargs.get('seller_price',False)
 		if not own_platform_id:
 			return invalid_response('Error', 'Parameter error')
+		if not seller_id:
+			return invalid_response('Error', 'Parameter error')
 		#还需再加入单条记录
 		own_partner_id = request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(own_platform_id))])
 		# 选择公司付款，暂不用
 		other_partner_id = request.env['res.partner'].sudo().search(
 			[('ocean_platform_id', '=', str(other_platform_id))])
-		product_ids = request.env['hotel.services'].sudo().search([('id', '=', int(service_id))])
-		if not own_partner_id or not product_ids:
-			return invalid_response('Error', 'There is no such use or the product')
-		# 判断是否可以购买,传入产品类型和人的id
-		cate_id = product_ids.categ_id.id
-		#购买人的id
+		service = request.env['hotel.services'].sudo().search([('id', '=', int(service_id))])
+		product_tmpl_id = service[0].product_id.product_tmpl_id.id
+		seller_ids = request.env['product.supplierinfo'].sudo().search(
+			[('product_tmpl_id', '=', product_tmpl_id), ('id', '=', seller_id)])
+		if not seller_ids:
+			return invalid_response("fail", [{"code": 600, "state": False}, {"data": "亲，你输入的供应商id是错误的哦"}], 200)
+		#供应商价格
+		price = seller_ids[0].price
+		cate_id = service.categ_id.id
+		#购买人的id，暂时公司是唯一识别号
 		partner_id = own_partner_id.id
-		product_price = product_ids.product_tmpl_id.list_price
-		if seller_id:
-			product_price = seller_price
+		product_price = price
+		# 判断是否可以购买,传入产品类型和人的id
 		is_buy = self._query_points_enough(partner_id, cate_id, product_price)
 		if not is_buy:
 			return invalid_response("fail", [{"code": 600, "state": False}, {"data": ""}], 200)
 		if is_buy:
 			state = "paid"
 			#该服务是否需要审核
-			if product_ids.auto_approval:
+			if service.auto_approval:
 				state = "audit"
 			#创建服务记录
 			_line_dict = {
 				"partner_id": int(partner_id),
-				"membership_server": product_ids.id,
+				"membership_server": service.id,
 				"state": state,
 				"seller_id": seller_id,
+				"reservation_type": "invoice",
 				"service_price": product_price
 			}
 			invoice_list=request.env['membership.service_line'].sudo().create(_line_dict)
@@ -266,6 +280,7 @@ class MembershipServiceController(http.Controller):
 			"state": "audit",
 			"service_price": product_price,
 			"seller_id": seller_id,
+			"reservation_type": "subscribe",
 			'comments': comments
 		}
 		subscribe_list = request.env['membership.service_line'].sudo().create(_line_dict)
@@ -327,12 +342,16 @@ class MembershipServiceController(http.Controller):
 			return invalid_response("fail", [{"code": 605}, {"data": "The document awaits approval."}], 200)
 		if service_id.service_price > points_line.points:
 			return invalid_response("fail",[{"code": 600}, {"data": "Insufficient Integral"}],200)
-		points_line.write({
-			"points": points_line.points - service_id.service_price
-		})
-		service_id.write({
-			"state": "available"
-		})
+		try:
+			points_line.write({
+				"points": points_line.points - service_id.service_price
+			})
+			service_id.write({
+				"state": "available"
+			})
+		except Exception as e:
+			_logger.info('>>>service_pay_points%s'%e)
+			return invalid_response("success", [{"code": 200}, {"data": "Successful Purchase"}], 200)
 		return invalid_response("success", [{"code": 200}, {"data": "Successful Purchase"}], 200)
 
 	#服务支付api
@@ -340,7 +359,7 @@ class MembershipServiceController(http.Controller):
 	@http.route('/membership/service/invoice/pay', type='http', auth='none', csrf=False, methods=['POST'])
 	def service_invoice_pay(self, **kwargs):
 		#接收订单id和积分id
-		invoice_id = kwargs.get('invoice_id', False)  # 预留字段
+		invoice_id = kwargs.get('invoice_id', False)
 		points_id = kwargs.get('points_id',False)
 		if not invoice_id or not points_id:
 			return invalid_response('Error', 'Parameter error')

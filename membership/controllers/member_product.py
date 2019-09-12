@@ -182,8 +182,12 @@ class MembershipProductController(http.Controller):
 		if len(price_name) == 0:
 			return invalid_response('Error', 'Parameter error')  # 参数错误
 		product_tmpl_id = self._query_product_tmpl_id(product_id)
-		amount_price = request.env['product.pricelist.item'].sudo().search(
-			[('product_tmpl_id', '=', product_tmpl_id), ('pricelist_id', '=', price_name)]).fixed_price or 0
+		pricelist_id = request.env['product.pricelist.item'].sudo().search(
+			[('product_tmpl_id', '=', product_tmpl_id), ('pricelist_id', '=', price_name)])
+		if not pricelist_id:
+			return invalid_response("fail", [{"code": 603, "state": False}, {"data": "The product does not conform to the price"}], 200)
+		amount_price = pricelist_id.fixed_price
+		currency_id = pricelist_id.currency_id.id
 		if int(amount_price) != int(request_price):
 			return invalid_response("fail", [{"code": 600, "state": False}, {"data": "Prices do not coincide"}], 200)
 		product_id = int(product_id)
@@ -202,7 +206,8 @@ class MembershipProductController(http.Controller):
 		invoice_data = {
 			'membership_product_id': product_id,
 			'amount': amount_price,
-			'personal_id': personal_id
+			'personal_id': personal_id, #操作者
+			'currency_id': currency_id,
 		}
 		# print(invoice_data)
 		invoice_list = partner.create_membership_invoice(datas=invoice_data)
@@ -213,7 +218,6 @@ class MembershipProductController(http.Controller):
 	@validate_token
 	@http.route('/membership/pay', type='http', auth='none', csrf=False, methods=['POST'])
 	def pay(self, **payload):
-		print(payload)
 		invoice_id = payload.get('invoice_id', False)
 		if not invoice_id:
 			return invalid_response('Error', 'Parameter error')  # 参数错误
