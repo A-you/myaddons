@@ -32,7 +32,7 @@ class Invoice(models.Model):
         # 生成服务订单编号
         if not self.membership_numbered:
             vals['invoice_initial_code'] = self.env['ir.sequence'].next_by_code(
-                'membership.service_line') or ''
+                'membership.invoice_initial_code') or ''
         return super(Invoice, self).create(vals)
 
     @api.multi

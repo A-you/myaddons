@@ -16,6 +16,8 @@ from odoo.addons.restful.controllers.main import validate_token
 
 from .base import BaseController
 from .base import _ocean_platform_to_partner
+import logging
+_logger = logging.getLogger(__name__)
 
 class MembershipEventController(http.Controller,BaseController):
 
@@ -98,10 +100,19 @@ class MembershipEventController(http.Controller,BaseController):
 		time_slot = kwargs.get('time_slot', False)
 		time_stamp = kwargs.get('time_stamp', False)   #前端选择日历后需转为时间戳
 		service_id = kwargs.get('service_id', False)
-		domain = []
+		domain = [('state', '=', 'confirm')]
 		if service_id and int(service_id):
-			pass
-		return self.membership_event_query_route()
+			domain.append(("service_product_id","=",int(service_id)))
+		if keyword:
+			domain.append(("name","ilike",keyword))
+		try:
+			event_ids = request.env['event.event'].sudo().search(domain)
+			data = [self._handle_event_dict(event_id) for event_id in event_ids]
+			count = len(data)
+			return self.res_ok(count=count, data=data)
+		except Exception as e:
+			_logger.error("api,membership_event_query_condition>>%s"%e)
+			return self.res_err(501,"查询错误")
 
 	def _handle_event_detail_dict(self,event_id):
 		_dict={
