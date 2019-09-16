@@ -37,7 +37,7 @@
     </record>
 
 
-    <menuitem id="wizard_res_menu1" name="Membership Consumption Details" action="action_membership_statement_wizard"
-        parent="membership.menu_association" sequence="20" />
+    <!--<menuitem id="wizard_res_menu1" name="Membership Consumption Details" action="action_membership_statement_wizard"-->
+        <!--parent="membership.menu_association" sequence="20" />-->
 
 </odoo>

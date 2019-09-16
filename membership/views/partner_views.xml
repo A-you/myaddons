@@ -123,7 +123,7 @@
                 <field name="google_account"/>
                 <field name="pinterest_account"/>
                 <field name="other_account"/>
-                <field name="ocean_platform_id" readonly="1"/>
+                <field name="ocean_platform_id"/>
                 <field name="uniform_social_credit_code"/>
                 <field name="member_take"/>
             </xpath>

@@ -3,14 +3,15 @@ from odoo.http import request
 
 from odoo.addons.restful.common import *
 from odoo.addons.restful.controllers.main import validate_token
-
+import logging
+_logger = logging.getLogger(__name__)
 
 
 
 class MembershipController(http.Controller):
 
     #为公司添加用户或者为用户添加公司
-    @validate_token
+    # @validate_token
     @http.route('/member/add/personal_or_company',type='http', auth='none', csrf=False, methods=['POST'])
     def add_personal_or_company(self,**kwargs):
         own_platform_id = kwargs.get('own_platform_id',False)
@@ -22,16 +23,25 @@ class MembershipController(http.Controller):
         #必须是公司身份
         company_id = request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(other_platform_id))])
         #判断公司是不是公司
-        if company_id.is_company:
-            return invalid_response('Error', 'Parameter error')
-        #插入到第三张表，个人与公司的关系表
-        sql = """INSERT INTO personal_or_company_rel (current_id, relation_id)
-VALUES (%s,%s);"""%(own_partner_id.id,company_id.id)
-        request._cr.execute(sql)
-        request._cr.commit()
+        if  not company_id.is_company:
+            return invalid_response('Error', 'Parameter error rrr')
+        try:
+            # 插入到第三张表，个人与公司的关系表
+            sql = """INSERT INTO personal_or_company_rel (current_id, relation_id)
+    VALUES (%s,%s);"""%(own_partner_id.id,company_id.id)
+            request._cr.execute(sql)
+            request._cr.commit()
+            #绑定公司与公司
+            sql = """INSERT INTO company_to_personal_rel (company_id, personal_id)
+                VALUES (%s,%s);""" % (company_id.id, own_partner_id.id)
+            request._cr.execute(sql)
+            request._cr.commit()
+        except Exception as e:
+            _logger.error('>>>>>/member/add/personal_or_company%s'%e)
+            return invalid_response("fail",[{"code": 406}, {"data": "入参不对"}], 200)
         return invalid_response("success", [{"code": 200}, {"data": ""}], 200)
 
-    #创建发票
+    #创建消息
     @validate_token
     @http.route('/member/mail/message/reply',type='http', auth='none', csrf=False, methods=['POST'])
     def mail_message_create_reply(self,**kwargs):
