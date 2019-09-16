@@ -13,6 +13,8 @@ from datetime import timedelta
 
 from odoo.addons.restful.common import *
 from odoo.addons.restful.controllers.main import validate_token
+import logging
+_logger = logging.getLogger(__name__)
 
 class MembershipMyController(http.Controller):
 
@@ -109,10 +111,10 @@ class MembershipMyController(http.Controller):
 		own_platform_id = kwargs.get('own_platform_id', False)  # 暂定购买者自己
 		if not own_platform_id:
 			return invalid_response('Error', 'Parameter error')
-		partner_id= request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(own_platform_id))]).id
+		partner_id= request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(own_platform_id))])
 		if not partner_id:
 			return invalid_response('Error', 'Parameter error')
-		product_id = int(partner_id)
+		product_id = int(partner_id.id)
 		membership_line_ids = request.env['membership.membership_line'].sudo().search([('partner', '=', product_id)])
 		if not membership_line_ids:
 			return invalid_response([{"code": 200}, {"data": "暂无数据"}], "success", 200)
@@ -131,37 +133,116 @@ class MembershipMyController(http.Controller):
 		}
 		return _dict
 	#支付记录
-	@validate_token
-	@http.route('/membership/payment/record',type='http', auth='none', csrf=False, methods=['GET'])
-	def query_payment_record(self,**kwargs):
+	# @validate_token
+	# @http.route('/membership/payment/record',type='http', auth='none', csrf=False, methods=['GET'])
+	# def query_payment_record(self,**kwargs):
+	# 	own_platform_id = kwargs.get('own_platform_id', False)
+	# 	past_times = kwargs.get('past_times', False)
+	# 	type_id = kwargs.get('type_id', False)
+	# 	if not own_platform_id:
+	# 		return invalid_response('Error', 'Parameter error')
+	# 	partner_id= request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(own_platform_id))])[0].id
+	# 	if not partner_id:
+	# 		return invalid_response('Error', 'Parameter error')
+	# 	product_id = int(partner_id)
+	# 	domain = [('partner_id', '=', product_id)]
+	# 	if past_times:
+	# 		try:
+	# 			past_times = int(past_times)
+	# 		except Exception as e:
+	# 			return invalid_response('Error', 'past_times should be plastic surgery')
+	# 		past_time = fields.datetime.now() + timedelta(days=-int(past_times))
+	# 		domain.append(('create_date','>=',past_time))
+	# 	if type_id:
+	# 		try:
+	# 			type_id = int(type_id)
+	# 		except Exception as e:
+	# 			return invalid_response('Error', 'type_id should be plastic surgery')
+	# 		domain.append(('service_type_id', '>=', type_id))
+	# 	records = request.env['membership.payment.record'].sudo().search(domain,order='create_date desc')
+	# 	data = [self.handle_records_line(record) for record in records]
+	# 	return invalid_response([{"code": 200}, {"data": data}], "success", 200)
+
+	def _handle_service_line_dict(self,record):
+		date = record.create_date.strftime("%Y-%m-%d")
+		SERVICE_STATE = {
+			'audit':'Waiting for Audit',
+			'paid': 'Waiting for payment',
+			'available': 'Available',
+			'expired':"Expired",
+			'unpaid':"Unpaid",
+		}
+		_dict = {
+			"create_date": date,
+			"name": record.membership_server.name,
+			# 'clause': record.clause,
+			'points': '-'+str(record.service_price),
+			'state': SERVICE_STATE[record.state]
+		}
+		return _dict
+
+	def _handle_membership_line_dict(self,record):
+		date = record.create_date.strftime("%Y-%m-%d")
+		STATE = {
+			    'none': 'Non Member',
+			    'canceled': "Cancelled Member",
+			    'old': 'Old Member',
+		        'waiting':'Waiting Member',
+		        'invoiced':'Invoiced Member',
+		        'free':'Free Member',
+		        'paid':'Paid Member',
+		}
+		_dict = {
+			"create_date": date,
+			"name": record.membership_id.name,
+			# 'clause': record.clause,
+			'points': '+' + str(record.membership_id.membership_points),
+			'state': STATE[record.state]
+		}
+		return _dict
+
+	#支付记录,更改后查询订单
+	@http.route('/membership/payment/record', type='http', auth='none', csrf=False, methods=['GET'])
+	def query_payment_record(self, **kwargs):
 		own_platform_id = kwargs.get('own_platform_id', False)
 		past_times = kwargs.get('past_times', False)
 		type_id = kwargs.get('type_id', False)
+		page = kwargs.get('page',1)
+		limit = kwargs.get('limit',10)
 		if not own_platform_id:
 			return invalid_response('Error', 'Parameter error')
-		partner_id= request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(own_platform_id))])[0].id
+		try:
+			limit=int(limit)
+			page=int(page)
+		except Exception as e:
+			return invalid_response('Error', 'Parameter error')
+		if limit <1 or page<1:
+			return invalid_response('Error', 'Parameter error')
+		partner_id = request.env['res.partner'].sudo().search([('ocean_platform_id', '=', str(own_platform_id))])[0]
 		if not partner_id:
 			return invalid_response('Error', 'Parameter error')
-		product_id = int(partner_id)
-		domain = [('partner_id', '=', product_id)]
+		_logger.info('>>/membership/invoice/query>>>%s'%partner_id.is_company)
+		partner_id = int(partner_id.id)
+		sdomain = [('partner_id', '=', partner_id)]
+		mdomain = [('partner', '=', partner_id)]
 		if past_times:
 			try:
 				past_times = int(past_times)
 			except Exception as e:
 				return invalid_response('Error', 'past_times should be plastic surgery')
 			past_time = fields.datetime.now() + timedelta(days=-int(past_times))
-			domain.append(('create_date','>=',past_time))
-		if type_id:
-			try:
-				type_id = int(type_id)
-			except Exception as e:
-				return invalid_response('Error', 'type_id should be plastic surgery')
-			domain.append(('service_type_id', '>=', type_id))
-		records = request.env['membership.payment.record'].sudo().search(domain,order='create_date desc')
-		data = [self.handle_records_line(record) for record in records]
+			sdomain.append(('create_date', '>=', past_time))
+			mdomain.append(('create_date', '>=', past_time))
+		service_records = request.env['membership.service_line'].sudo().search(sdomain,order='create_date desc')
+		member_records = request.env['membership.membership_line'].sudo().search(mdomain, order='create_date desc')
+		service_data = [self._handle_service_line_dict(record) for record in service_records]
+		member_data = [self._handle_membership_line_dict(record) for record in member_records]
+		data = member_data+service_data
+		data = sorted(data,key=lambda x:x['create_date'],reverse=True)
+		offset = (page-1)*limit  #偏移等于页码乘每页大小
+		upper = offset+limit
+		data=data[offset:upper]
 		return invalid_response([{"code": 200}, {"data": data}], "success", 200)
-
-
 
 	#账单报表数据，目前给java提供数据查询
 	@validate_token
