@@ -76,7 +76,7 @@ class Partner(models.Model):
     # membership_tag = fields.Many2many('product.template','membership_product_tag_rel','partner_id','product_id',string='Member Title')
     membership_tag = fields.One2many('membership.title','partner_id',string='Member Title')
     # 会员编号
-    membership_numbered = fields.Char(string='Numbered', readonly=True)
+    membership_numbered = fields.Char(string='Numbered')
     #根据会员等级和会员编号计算得来
     membership_code = fields.Char(compute='_compute_membership_code',store=True,string='Member Code')
     #会员积分列表
@@ -197,12 +197,12 @@ class Partner(models.Model):
             "name": srivice_type_idb.name,
 	        "member_type": "package",
 	         "service_type_id": srivice_type_idb.id,
-	         "points": 158,
+	         "points": 150,
         }),(0,0,{
 	        "name": srivice_type_idd.name,
 	        "member_type": "package",
 	         "service_type_id": srivice_type_idd.id,
-	         "points": 1853,
+	         "points": 1850,
         })]
         return vals
     @api.model
@@ -211,7 +211,8 @@ class Partner(models.Model):
         if not vals.get('is_company'):
             # 个人
             if vals.get('first_name') and vals.get('last_name'):
-                vals['name'] = '%s %s' % (vals.get('first_name') or '', vals.get('last_name') or '')
+                # vals['name'] = '%s %s' % (vals.get('first_name') or '', vals.get('last_name') or '')
+                vals['name'] = '%s %s' % (vals.get('last_name') or '', vals.get('first_name') or '')
             elif not vals.get('first_name') and vals.get('last_name'):
                 vals['name'] = '%s' % vals.get('last_name') or ''
             elif vals.get('first_name') and not vals.get('last_name'):
