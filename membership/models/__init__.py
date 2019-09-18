@@ -9,5 +9,6 @@ from . import product_service_type
 from . import membership_points_lines
 from . import payment_record
 from . import member_desire
+from . import form_configure
 
 from . import membership_import
