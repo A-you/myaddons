@@ -177,6 +177,7 @@ class MembershipMyController(http.Controller):
 			"name": record.membership_server.name,
 			# 'clause': record.clause,
 			'points': '-'+str(record.service_price),
+			'order': record.service_order,
 			'state': SERVICE_STATE[record.state]
 		}
 		return _dict
@@ -197,6 +198,7 @@ class MembershipMyController(http.Controller):
 			"name": record.membership_id.name,
 			# 'clause': record.clause,
 			'points': '+' + str(record.membership_id.membership_points),
+			"order": record.invoice_initial_code,
 			'state': STATE[record.state]
 		}
 		return _dict

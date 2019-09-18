@@ -251,7 +251,7 @@ class MembershipServiceController(http.Controller):
 				"service_price": product_price
 			}
 			invoice_list=request.env['membership.service_line'].sudo().create(_line_dict)
-			return invalid_response("success", [{"code": 200}, {"state": invoice_list[0].state, "invoice_id": invoice_list[0].id}], 200)
+			return invalid_response("success", [{"code": 200}, {"state": invoice_list[0].state,"service_order":invoice_list[0].service_order, "invoice_id": invoice_list[0].id}], 200)
 
 	#预约
 	@validate_token
@@ -284,10 +284,9 @@ class MembershipServiceController(http.Controller):
 			'comments': comments
 		}
 		subscribe_list = request.env['membership.service_line'].sudo().create(_line_dict)
-		return invalid_response("success",
-		                        [{"code": 200},
-		                         {"state": subscribe_list[0].state, "subscribe_id": subscribe_list[0].id}],
-		                        200)
+		return invalid_response("success", [{"code": 200}, {"state": subscribe_list[0].state,
+		                                                    "service_order": subscribe_list[0].service_order,
+		                                                    "invoice_id": subscribe_list[0].id}], 200)
 
 	# 改变服务的发票状态，进行扣积分，暂时先抽离出方法，以后可以单写接口,20190802不再使用
 	def _product_service_pay(self, id):
@@ -354,7 +353,7 @@ class MembershipServiceController(http.Controller):
 			return invalid_response("success", [{"code": 200}, {"data": "Successful Purchase"}], 200)
 		return invalid_response("success", [{"code": 200}, {"data": "Successful Purchase"}], 200)
 
-	#服务支付api
+	#服务支付api,仅有改变状态的作用
 	@validate_token
 	@http.route('/membership/service/invoice/pay', type='http', auth='none', csrf=False, methods=['POST'])
 	def service_invoice_pay(self, **kwargs):

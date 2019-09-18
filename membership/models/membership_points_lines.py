@@ -49,9 +49,14 @@ class PricelistItem(models.Model):
 class MemberTitle(models.Model):
 	_name = 'membership.title'
 	_description = "会员称号，例如团队称号"
-
 	name = fields.Char(string='名称')
 	partner_id = fields.Many2one('res.partner',string='关联人')
 	product_id = fields.Many2one('product.product',string='关联会籍')
 	title_type = fields.Char(string='会员种类')
 	weight_num = fields.Integer(string='权重值',related='product_id.weight_num',store=True)
+
+
+# print(PricelistItem.__mro__)
+# print(PricelistItem.__bases__)
+
+# print(PricelistItem.__dict__)

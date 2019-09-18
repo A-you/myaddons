@@ -8,12 +8,14 @@
                 <sheet>
                     <group>
                     <group>
+                        <field name="invoice_initial_code"/>
                         <field name="partner"/>
                         <field name="state"/>
                         <field name="date"/>
                         <field name="date_from"/>
                     </group>
                     <group>
+                        <field name="account_invoice_id"/>
                         <field name="member_price"/>
                          <field name="membership_id"/>
                         <field name="company_id"/>
@@ -30,6 +32,7 @@
         <field name="model">membership.membership_line</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="invoice_initial_code"/>
                 <field name="partner"/>
                 <field name="state"/>
                 <field name="member_price"/>

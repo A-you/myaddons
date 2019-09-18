@@ -156,10 +156,13 @@ class MembershipProductController(http.Controller):
 		#个人唯一标识符
 		personal_platform_id = kwargs.get('personal_platform_id', False)
 		product_id = kwargs.get('product_id', False)
+		#公司唯一标识符
 		company_platform_id = kwargs.get('company_platform_id',False)
 		price = kwargs.get('price',"")
 		if not personal_platform_id and not product_id:
 			return invalid_response('Error', 'Parameter error')  # 参数错误
+		if not product_id.isdigit():
+			return invalid_response('Error', 'product_id Must be a num type')  # 参数错误
 		#这里获得是一个对象
 		if not price:
 			return invalid_response('Error', 'Parameter error')  # 参数错误
@@ -190,7 +193,6 @@ class MembershipProductController(http.Controller):
 		currency_id = pricelist_id.currency_id.id
 		if int(amount_price) != int(request_price):
 			return invalid_response("fail", [{"code": 600, "state": False}, {"data": "Prices do not coincide"}], 200)
-		product_id = int(product_id)
 		personal_id = base._ocean_platform_to_partner(personal_platform_id)
 		company_id = base._ocean_platform_to_partner(company_platform_id)
 
@@ -198,21 +200,15 @@ class MembershipProductController(http.Controller):
 		partner = request.env['res.partner'].sudo().browse(company_id)
 		if not partner:
 			return invalid_response('Error', 'There is no such user.')
-
-		# product = request.env['product.product'].sudo().browse(product_id)
-		#这个价格是有问题的
-		# price_dict = product.price_compute('list_price')
-		# amount = price_dict.get(product_id) or False
 		invoice_data = {
-			'membership_product_id': product_id,
+			'membership_product_id': int(product_id),
 			'amount': amount_price,
 			'personal_id': personal_id, #操作者
 			'currency_id': currency_id,
 		}
-		# print(invoice_data)
 		invoice_list = partner.create_membership_invoice(datas=invoice_data)
-		# print(invoice_list)
-		return valid_response([{'invoice_id': invoice_list[0], 'result': 'create invoice successful'}])
+		# return valid_response([{'invoice_id': invoice_list.id, 'membership_order':invoice_list.invoice_initial_code,'result': 'create invoice successful'}])
+		return valid_response([{'invoice_id': invoice_list.id, 'membership_order':invoice_list.invoice_initial_code,'result': 'create invoice successful'}])
 
 	# 会籍付款，成功返回，进行更改发票状态
 	@validate_token

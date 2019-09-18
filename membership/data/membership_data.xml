@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
         <record id="ir_cron_update_membership" model="ir.cron">
             <field name="name">Membership: update memberships</field>
             <field name="model_id" ref="base.model_res_partner"/>
@@ -33,9 +33,9 @@
         </record>
 
         <record id="service_invoice_initial_code_line_data" model="ir.sequence">
-            <field name="name">服务订单编号</field>
+            <field name="name">发票订单编号</field>
             <field name="code">membership.invoice_initial_code</field>
-            <field name="prefix">HS%(year)s%(month)s%(day)s/</field>
+            <field name="prefix">HS%(year)s%(month)s%(day)s</field>
             <field name="padding">4</field>
             <field name="number_next">1</field>
             <field name="number_increment">1</field>

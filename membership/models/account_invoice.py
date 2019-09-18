@@ -30,7 +30,7 @@ class Invoice(models.Model):
     @api.model
     def create(self, vals):
         # 生成服务订单编号
-        if not self.membership_numbered:
+        if not self.invoice_initial_code:
             vals['invoice_initial_code'] = self.env['ir.sequence'].next_by_code(
                 'membership.invoice_initial_code') or ''
         return super(Invoice, self).create(vals)

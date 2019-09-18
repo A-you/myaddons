@@ -55,6 +55,8 @@ class MembershipLine(models.Model):
     # 分析账户
     account_invoice_id = fields.Many2one('account.invoice', related='account_invoice_line.invoice_id', string='Invoice',
                                          readonly=True)
+
+    invoice_initial_code = fields.Char(string='编号',related='account_invoice_id.invoice_initial_code',store=True, readonly=True)
     # 公司
     company_id = fields.Many2one('res.company', related='account_invoice_line.invoice_id.company_id', string="Company",
                                  readonly=True, store=True)
@@ -329,6 +331,8 @@ class MembershipLine(models.Model):
             else:
                 line.state = 'none'
 
+
+
 class Points(models.Model):
     _name = 'membership.points'
     _description = 'Membership Points'
@@ -428,7 +432,7 @@ class ServiceLine(models.Model):
     @api.model
     def create(self, vals):
             # 生成服务订单编号
-        if not self.membership_numbered:
+        if not self.service_order:
             vals['service_order'] = self.env['ir.sequence'].next_by_code(
                 'membership.service_line') or ''
         return super(ServiceLine, self).create(vals)

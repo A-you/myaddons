@@ -15,7 +15,7 @@ LEVEL = [
     (-1,'潜在'),
     (1, 'ZW'),
     (2, 'ZR'),
-    (3, 'C'),
+    (3, 'ZP'),
 ]
 
 get_module_resource = get_resource_path
@@ -85,6 +85,8 @@ class Partner(models.Model):
     #会籍服务列表
     membership_server = fields.One2many(comodel_name='membership.service_line', inverse_name='partner_id',
                                         string='Server')
+    #愿望清单列表
+    desire_ids = fields.One2many(comodel_name='membership.desire', inverse_name='partner_id',string='Desire Order')
     member_take = fields.Boolean(string="优先")
 
     # 姓：last_name
@@ -189,7 +191,7 @@ class Partner(models.Model):
     #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
     #     return super(Partner, self).create(vals)
 
-    #查询注册会员,时送的汇集
+    #查询注册会员,时送的会籍
     def query_register_member_product(self,vals):
         srivice_type_idb = self.env['hotel.service.type'].sudo().search([("name", '=', "空間租用")])
         srivice_type_idd = self.env['hotel.service.type'].sudo().search([("name", '=', "專業交流")])
@@ -296,7 +298,8 @@ class Partner(models.Model):
         for partner in self:
             if partner.membership_level == 2:
                 prefix = 'ZR'
-            print("ddd",partner.membership_numbered)
+            if partner.membership_level == 3:
+                prefix = 'ZP'
             partner.membership_code = prefix+str(partner.membership_numbered)
 
     @api.depends('member_lines.account_invoice_line.invoice_id.state',
@@ -492,7 +495,7 @@ class Partner(models.Model):
             # if partner.free_member:
             #     raise UserError(_("Partner is a free Member."))
             # 合作伙伴没有地址来制作发票。
-            print(addr)
+            # print(addr)
             if not addr.get('invoice', False):
                 raise UserError(_("Partner doesn't have an address to make the invoice."))
             invoice = self.env['account.invoice'].create({
@@ -516,7 +519,10 @@ class Partner(models.Model):
             invoice.write({'invoice_line_ids': [(0, 0, line_values)]})
             invoice_list.append(invoice.id)
             invoice.compute_taxes()
-        return invoice_list
+        # return invoice_list
+        #直接返回发票集，暂时去掉直接返回id
+            print(invoice)
+            return invoice
 
     @api.multi
     def create_membership_services_invoice(self, product_ids=None, datas=None):
