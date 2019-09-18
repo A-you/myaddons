@@ -28,6 +28,7 @@ invoice and send propositions for membership renewal.
         'wizard/membership_invoice_views.xml',
         'wizard/membership_service_invoice_views.xml',
         'data/membership_data.xml',
+        'data/member_desire_data.xml',
         'views/product_views.xml',
         'views/partner_views.xml',
         'views/membership.xml',

@@ -256,11 +256,13 @@
                     </field>
 
                 </page>
-                <page string="Desire Order">
+                <page string="Desire List">
                     <field name="desire_ids">
                         <tree>
+                            <field name="desire_order"/>
                             <field name="service_id"/>
                             <field name="seller_id"/>
+                            <field name="service_price"/>
                         </tree>
                     </field>
                 </page>

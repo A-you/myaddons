@@ -25,12 +25,12 @@ error_code = {
     602: u'签名错误',
 	603: u'参数错误,Parameter error',
     604: u'无效的参数,不存在该用户',
+    605: u'供应商不存在或供应商与服务不吻合',
     700: u'暂无数据',
     701: u'该功能暂未开通',
     702: u'资源余额不足',
     703: u'活动已结束',
     901: u'登录超时',
-    300: u'缺少参数',
     400: u'域名错误',
     401: u'该域名已删除',
     402: u'该域名已禁用',
@@ -45,7 +45,7 @@ class BaseController(object):
             return self.res_err(404), None
         return None, wxapp_entry[0]
 
-    def res_ok(self,count=0, data=None):
+    def res_ok(self,count=1, data=None):
         ret = {'code': 0, 'msg': 'success'}
         if data:
             ret['data'] = data

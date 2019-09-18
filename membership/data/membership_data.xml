@@ -26,7 +26,7 @@
           <record id="service_service_line_data" model="ir.sequence">
             <field name="name">服务订单编号</field>
             <field name="code">membership.service_line</field>
-            <field name="prefix">HS%(year)s%(month)s%(day)s/</field>
+            <field name="prefix">HS%(year)s%(month)s%(day)s</field>
             <field name="padding">4</field>
             <field name="number_next">1</field>
             <field name="number_increment">1</field>
