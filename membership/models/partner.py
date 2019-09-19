@@ -209,7 +209,6 @@ class Partner(models.Model):
         return vals
     @api.model
     def create(self, vals):
-        print(vals)
         if not vals.get('is_company'):
             # 个人
             if vals.get('first_name') and vals.get('last_name'):
@@ -222,12 +221,7 @@ class Partner(models.Model):
             else:
                 # raise ValueError("Missing first_name or last_name")
                 vals['name'] = "暂时没填"
-        else:
-            # 公司
-            # vals['membership_points_lines']=[(0,0,{
-            #     "name":"哈哈哈"
-            # })]
-            print("ggggg",vals)
+        if vals.get('is_company'):
             if not vals.get('name'):
                 raise ValueError('Missing name')
             vals = self.query_register_member_product(vals)
