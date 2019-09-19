@@ -262,7 +262,7 @@
                             <field name="desire_order"/>
                             <field name="service_id"/>
                             <field name="seller_id"/>
-                            <field name="service_price"/>
+                            <field name="desire_price"/>
                         </tree>
                     </field>
                 </page>

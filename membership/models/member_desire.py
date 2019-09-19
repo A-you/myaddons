@@ -18,7 +18,7 @@ class MemberDesire(models.Model):
 	seller_id = fields.Many2one('product.supplierinfo',string='供应商')   #只针对企业包的时候填写
 	service_id = fields.Many2one('hotel.services',string='服务名称')   #对应服务
 	member_type = fields.Char(string='Member Product Type')
-	service_price = fields.Float(string='服务价格',related='seller_id.price', store=True)
+	desire_price = fields.Float(string='服务价格',related='seller_id.price', store=True)
 	company_id = fields.Many2one('res.partner',string='关联公司')
 	desire_order = fields.Char(string='Desire Order')
 
