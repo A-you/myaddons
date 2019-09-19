@@ -256,16 +256,16 @@
                     </field>
 
                 </page>
-                <page string="Desire List">
-                    <field name="desire_ids">
-                        <tree>
-                            <field name="desire_order"/>
-                            <field name="service_id"/>
-                            <field name="seller_id"/>
-                            <!--<field name="desire_price"/>-->
-                        </tree>
-                    </field>
-                </page>
+                <!--<page string="Desire List">-->
+                    <!--<field name="desire_ids">-->
+                        <!--<tree>-->
+                            <!--<field name="desire_order"/>-->
+                            <!--<field name="service_id"/>-->
+                            <!--<field name="seller_id"/>-->
+                            <!--&lt;!&ndash;<field name="desire_price"/>&ndash;&gt;-->
+                        <!--</tree>-->
+                    <!--</field>-->
+                <!--</page>-->
                 <page string="所在的公司" attrs="{'invisible': [('company_type','=','company')]}">
                     <field name="personal_or_company">
                         <tree>
