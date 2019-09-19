@@ -10,15 +10,22 @@ from odoo import models,fields,api
 class InhertEventEvent(models.Model):
 	_inherit = 'event.event'
 
-	service_product_id = fields.Many2one('hotel.services',string='关联服务')
+	service_product_id = fields.Many2many('hotel.services',string='关联服务')
 	service_description = fields.Html(string='描述')
 	service_image = fields.Binary(string='图片',attachment=True)
 	image_url = fields.Char(string='图片地址',compute='_compute_display_url')
 
+	#活动日期
+	start_day = fields.Date(string='起')
+	end_day = fields.Date(string='止')
+
+	#时间段
 	start_hour = fields.Float('起', default=7,help='一天中,活动开展的时间起')
 	end_hour = fields.Float('止', default=23,help='一天中,活动开展的时间止')
 
-	event_addr = fields.Char(string='活动地址')
+	#活动地址
+	event_site = fields.Char(string='粗略地址')
+	event_addr = fields.Char(string='详细地址')
 
 	# _default_event_ticket_ids = [
 	# 	(4,self.env)

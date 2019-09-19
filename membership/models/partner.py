@@ -207,6 +207,7 @@ class Partner(models.Model):
 	         "points": 1850,
         })]
         return vals
+
     @api.model
     def create(self, vals):
         if not vals.get('is_company'):
