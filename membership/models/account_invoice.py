@@ -244,12 +244,9 @@ class AccountInvoiceLine(models.Model):
                 'account_invoice_line': invoice_line.id,
             })
         # 创建会员服务记录
-        print('创建发票')
         if invoice_line.invoice_id.type == 'out_invoice' and \
                 not MemberServiceLine.search([('account_invoice_line', '=', invoice_line.id)]) \
                 and invoice_line.product_id.type == 'membership_service':
-            print('会员服务')
-            print(invoice_line.product_id)
             service_line = MemberServiceLine.create({
                 'partner_id': invoice_line.invoice_id.partner_id.id,
                 'membership_server': invoice_line.product_id.id,

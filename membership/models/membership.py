@@ -111,6 +111,8 @@ class MembershipLine(models.Model):
         product_dict={}
         membership_name = ""
         membership_ids=self.env['membership.title'].sudo().search([("partner_id","=",id)])
+        if not membership_ids:
+            return False
         for x in membership_ids:
             product_dict[x.title_type] = x.weight_num or 0
         membership_name=max(product_dict,key=product_dict.get)
@@ -121,15 +123,16 @@ class MembershipLine(models.Model):
         url = "http://111.231.55.146:8082/register/bindMembership"
         companyId=self.partner.ocean_platform_id
         membership_name = self._query_membership_title_max()
-        _logger.info('>>>have welcome_new_points %s' % membership_name)
-        postdata = urllib.parse.urlencode({
-            "companyId": companyId,
-            "membershipName": membership_name,
-        }).encode('utf-8')
-        req = urllib.request.Request(url=url, data=postdata, method='POST')
-        res = urllib.request.urlopen(req)
-        res_data = res.read().decode('utf-8')
-        return True
+        if membership_name:
+            _logger.info('>>>have welcome_new_points %s' % membership_name)
+            postdata = urllib.parse.urlencode({
+                "companyId": companyId,
+                "membershipName": membership_name,
+            }).encode('utf-8')
+            req = urllib.request.Request(url=url, data=postdata, method='POST')
+            res = urllib.request.urlopen(req)
+            res_data = res.read().decode('utf-8')
+            return True
 
     def _handle_package_new_points(self,hotel_service_type_id,welcome_new_points_dict):
         welcome_new_points = 0

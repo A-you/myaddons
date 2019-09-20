@@ -23,8 +23,8 @@ class MembershipInvoice(models.TransientModel):
         """This function returns value of  product's member price based on product id.
         """
         price_dict = self.product_id.price_compute('list_price')
-        for x in self.product_id.membership_service_type_ids:
-	        print(x.hotel_service_type_id.name, x.percentage_ids.name)
+        # for x in self.product_id.membership_service_type_ids:
+	    #     print(x.hotel_service_type_id.name, x.percentage_ids.name)
         # print(self.product_id.membership_service_type_ids)
         self.member_price = price_dict.get(self.product_id.id) or False
         # print(self.product_id.item_ids)
