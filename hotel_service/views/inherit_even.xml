@@ -7,10 +7,10 @@
             <field name="model">event.event</field>
            <field name="inherit_id" ref="event.view_event_form"/>
            <field name="arch" type="xml">
-               <xpath expr="//field[@name='date_begin']" position="before">
-                   <!-- Add your fields or attributes here -->
-                   <field name="service_product_id"/>
-               </xpath>
+               <!--<xpath expr="//field[@name='date_begin']" position="before">-->
+                   <!--&lt;!&ndash; Add your fields or attributes here &ndash;&gt;-->
+                   <!--<field name="service_product_id"/>-->
+               <!--</xpath>-->
                <page name="event_mail_schedule" position="after">
                    <page string="Describe">
                        <group>
@@ -19,18 +19,25 @@
                                <field name="image_url" widget="url"/>
                             </group>
                            <group string="时间段" help="一天中,活动开展的时间段">
+                               <h3>日期段</h3>
+                               <field name="start_day"/>
+                               <field name="end_day"/>
+                               <h3>时间段</h3>
                                <field name='start_hour' widget='float_time' />
                                <field name='end_hour' widget='float_time' />
                            </group>
                        </group>
-                       <div>
-                           <label for="event_addr"/>
-                            <field name="event_addr" string="活动地址"/>
-                       </div>
+                       <group>
+                           <field name="event_site"/>
+                           <field name="event_addr"/>
+                       </group>
                        <div>
                            <label for="service_description"/>
                            <field name="service_description"/>
                        </div>
+                   </page>
+                   <page string="关联服务">
+                       <field name="service_product_id"/>
                    </page>
                </page>
            </field>
